@@ -33,11 +33,24 @@ async function startServer() {
     });
   });
 
-  // 2. Real-time Governor Inspection
-  app.post('/api/analyze', (req, res) => {
+  // 2. Real-time Governor Inspection (synchronously integrated with n8n webhook)
+  const handleAnalyzeRequest = async (req: express.Request, res: express.Response) => {
     try {
-      const payload = req.body as ProposedActionRequest;
-      if (!payload || !payload.agent_id || !payload.action) {
+      const raw = req.body || {};
+      const payload: ProposedActionRequest = {
+        agent_id: raw.agent_id || 'research-agent-01',
+        agent_role: raw.agent_role || (raw.agent_id ? `${String(raw.agent_id).split('-')[0]}_agent` : 'research_agent'),
+        task: raw.task || `Execute ${raw.action || 'read_file'} on ${raw.resource || 'default_resource'}`,
+        action: raw.action || 'read_file',
+        tool: raw.tool || 'filesystem',
+        resource: raw.resource || 'public_report.pdf',
+        reason: raw.reason || 'Evaluated via Agent Permission Check endpoint',
+        data_provenance: raw.data_provenance || 'n8n_webhook_pipeline',
+        parameters: raw.parameters || {},
+        user_input: raw.user_input
+      };
+
+      if (!raw.agent_id && !raw.action) {
         return res.status(400).json({
           error: 'Invalid payload: agent_id and action are required parameters.'
         });
@@ -45,15 +58,22 @@ async function startServer() {
 
       const report = runGovernorPipeline(payload);
 
-      // Asynchronously forward to n8n webhook workflow
-      n8nWebhookService.forwardInspection(report);
+      // Synchronously forward to https://hindujareddy.app.n8n.cloud/webhook/agent-permission-check
+      // unless caller passed skip_n8n_forward to prevent recursion
+      if (!raw.skip_n8n_forward) {
+        await n8nWebhookService.forwardInspection(report);
+      }
 
       return res.json(report);
     } catch (err: any) {
       console.error('Governor error:', err);
       return res.status(500).json({ error: err.message || 'Internal Governor Fault' });
     }
-  });
+  };
+
+  app.post('/api/analyze', handleAnalyzeRequest);
+  app.post('/webhook/agent-permission-check', handleAnalyzeRequest);
+  app.post('/api/webhook/agent-permission-check', handleAnalyzeRequest);
 
   // 3. Dashboard metrics
   app.get('/api/dashboard', (req, res) => {

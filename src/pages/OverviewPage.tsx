@@ -362,6 +362,47 @@ export const OverviewPage: React.FC<OverviewPageProps> = ({
         </div>
 
         {/* ==================================================
+            1B. LIVE n8n WEBHOOK INTEGRATION BAR
+            ================================================== */}
+        <div className="control-panel px-5 py-3.5 flex flex-col md:flex-row md:items-center justify-between gap-3 relative overflow-hidden">
+          <div className="absolute top-0 left-0 right-0 h-[1.5px] bg-gradient-to-r from-[#CBFF70] via-[#AB98FF] to-transparent" />
+          <div className="flex flex-wrap items-center gap-3 min-w-0">
+            <div className="flex items-center gap-1.5 px-2 py-0.5 rounded bg-[#CBFF70]/10 border border-[#CBFF70]/30 text-[#CBFF70] font-mono text-[10px] font-semibold shrink-0">
+              <Webhook className="w-3 h-3" />
+              <span>n8n WEBHOOK CONNECTED</span>
+            </div>
+            <code className="text-xs font-mono text-[#F0F4F8] bg-[#0E1318] px-2.5 py-1 rounded border border-[#2A343E] truncate select-all">
+              https://hindujareddy.app.n8n.cloud/webhook/agent-permission-check
+            </code>
+            {n8nStatus && (
+              <span className="text-[11px] font-mono text-[#69E2AD] bg-[#69E2AD]/10 border border-[#69E2AD]/30 px-2 py-0.5 rounded">
+                {n8nStatus}
+              </span>
+            )}
+          </div>
+
+          <div className="flex items-center gap-2 shrink-0">
+            <button
+              type="button"
+              onClick={handleDispatchToN8n}
+              disabled={isPushingN8n}
+              className="px-3 py-1.5 rounded-lg bg-[#1B232B] hover:bg-[#232D37] border border-[#CBFF70]/40 text-xs font-mono text-[#CBFF70] font-semibold flex items-center gap-1.5 transition-colors cursor-pointer disabled:opacity-50"
+            >
+              <Zap className="w-3 h-3 fill-[#CBFF70]" />
+              <span>{isPushingN8n ? 'Dispatching...' : 'Test Webhook Now'}</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => onNavigate('n8n')}
+              className="px-3 py-1.5 rounded-lg bg-[#151B21] hover:bg-[#1B232B] border border-[#2A343E] text-xs font-mono text-[#F0F4F8] flex items-center gap-1.5 transition-colors cursor-pointer"
+            >
+              <span>n8n Console</span>
+              <ArrowRight className="w-3 h-3 text-[#CBFF70]" />
+            </button>
+          </div>
+        </div>
+
+        {/* ==================================================
             2. LARGE, BEAUTIFULLY TYPESET METRICS
             Asymmetric grid, tabular numerals, small supporting labels
             ================================================== */}

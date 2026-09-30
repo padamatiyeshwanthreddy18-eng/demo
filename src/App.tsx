@@ -167,6 +167,7 @@ export default function App() {
             activeTab={activeTab}
             onOpenCommandPalette={() => setCommandPaletteOpen(true)}
             onQuickEvaluate={() => setActiveTab('analyzer')}
+            onNavigate={setActiveTab}
           />
         </div>
 

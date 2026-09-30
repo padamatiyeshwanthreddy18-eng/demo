@@ -152,34 +152,56 @@ class N8nWebhookService {
     return deliveryRecord;
   }
 
-  public async forwardInspection(report: SecurityInspectionReport): Promise<void> {
-    if (!this.config.enabled || !this.config.forward_evaluations) return;
+  public async forwardInspection(report: SecurityInspectionReport): Promise<N8nWebhookDelivery | undefined> {
+    if (!this.config.enabled || !this.config.forward_evaluations) return undefined;
 
-    // Asynchronously dispatch without blocking governor response
-    this.dispatch('agent_permission_check', {
-      request_id: report.request_id,
-      session_id: report.session_id,
-      agent_id: report.request.agent_id,
-      agent_role: report.request.agent_role,
-      action: report.request.action,
-      tool: report.request.tool,
-      resource: report.request.resource,
-      task: report.request.task,
-      parameters: report.request.parameters,
-      decision: report.decision,
-      approval_status: report.approval_status,
-      execution_status: report.execution?.execution_status,
-      risk_score: report.risk.risk_score,
-      risk_level: report.risk.risk_level,
-      dominant_factor: report.risk.dominant_factor,
-      matched_policy: report.policy.matched_policy,
-      policy_reason: report.policy.reason,
-      prompt_injection_detected: report.prompt_injection?.detected || false,
-      data_sensitivity: report.data_sensitivity?.classification,
-      latency_ms: report.latency_ms
-    }).catch(err => {
+    try {
+      const delivery = await this.dispatch('agent_permission_check', {
+        request_id: report.request_id,
+        session_id: report.session_id,
+        agent_id: report.request.agent_id,
+        agent_role: report.request.agent_role,
+        action: report.request.action,
+        tool: report.request.tool,
+        resource: report.request.resource,
+        task: report.request.task,
+        parameters: report.request.parameters,
+        decision: report.decision,
+        approval_status: report.approval_status,
+        execution_status: report.execution?.execution_status,
+        risk_score: report.risk.risk_score,
+        risk_level: report.risk.risk_level,
+        dominant_factor: report.risk.dominant_factor,
+        matched_policy: report.policy.matched_policy,
+        policy_reason: report.policy.reason,
+        prompt_injection_detected: report.prompt_injection?.detected || false,
+        data_sensitivity: report.data_sensitivity?.classification,
+        latency_ms: report.latency_ms
+      });
+
+      report.n8n_delivery = delivery;
+
+      // If the n8n workflow returned a custom decision override in JSON response, apply it
+      if (delivery.success && delivery.response_body && typeof delivery.response_body === 'object') {
+        const rb = delivery.response_body;
+        if (rb.decision && ['ALLOW', 'REQUIRE_APPROVAL', 'DENY'].includes(rb.decision)) {
+          report.decision = rb.decision;
+        } else if (typeof rb.allowed === 'boolean') {
+          report.decision = rb.allowed ? 'ALLOW' : 'DENY';
+        }
+        if (typeof rb.risk_score === 'number') {
+          report.risk.risk_score = Math.max(0, Math.min(100, rb.risk_score));
+        }
+        if (typeof rb.reason === 'string' && rb.reason.trim()) {
+          report.policy.reason = `${report.policy.reason} [n8n: ${rb.reason}]`;
+        }
+      }
+
+      return delivery;
+    } catch (err: any) {
       console.warn('[n8n Webhook] Forwarding failed:', err.message);
-    });
+      return undefined;
+    }
   }
 
   public async forwardApprovalDecision(
@@ -187,18 +209,21 @@ class N8nWebhookService {
     action: 'APPROVED' | 'REJECTED',
     supervisor: string,
     details?: any
-  ): Promise<void> {
-    if (!this.config.enabled || !this.config.forward_approvals) return;
+  ): Promise<N8nWebhookDelivery | undefined> {
+    if (!this.config.enabled || !this.config.forward_approvals) return undefined;
 
-    this.dispatch('approval_decision', {
-      request_id: requestId,
-      approval_action: action,
-      decided_by: supervisor,
-      timestamp: new Date().toISOString(),
-      details
-    }).catch(err => {
+    try {
+      return await this.dispatch('approval_decision', {
+        request_id: requestId,
+        approval_action: action,
+        decided_by: supervisor,
+        timestamp: new Date().toISOString(),
+        details
+      });
+    } catch (err: any) {
       console.warn('[n8n Webhook] Approval forwarding failed:', err.message);
-    });
+      return undefined;
+    }
   }
 }
 

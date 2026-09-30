@@ -13,12 +13,14 @@ interface TopBarProps {
   activeTab: string;
   onOpenCommandPalette?: () => void;
   onQuickEvaluate?: () => void;
+  onNavigate?: (tab: string) => void;
 }
 
 export const TopBar: React.FC<TopBarProps> = ({
   activeTab,
   onOpenCommandPalette,
-  onQuickEvaluate
+  onQuickEvaluate,
+  onNavigate
 }) => {
   const getBreadcrumbTitle = (tab: string) => {
     switch (tab) {
@@ -70,10 +72,15 @@ export const TopBar: React.FC<TopBarProps> = ({
             <span className="w-1.5 h-1.5 rounded-full bg-[#69E2AD]" />
             <span>Risk AST</span>
           </div>
-          <div className="flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#CBFF70]" />
-            <span>n8n Webhook</span>
-          </div>
+          <button
+            type="button"
+            onClick={() => onNavigate?.('n8n')}
+            title="https://hindujareddy.app.n8n.cloud/webhook/agent-permission-check"
+            className="flex items-center gap-1.5 px-2 py-0.5 rounded bg-[#151B21] hover:bg-[#1B232B] border border-[#CBFF70]/30 text-[#CBFF70] transition-colors cursor-pointer"
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-[#CBFF70] animate-pulse" />
+            <span>n8n: agent-permission-check</span>
+          </button>
         </div>
 
         <div className="h-3.5 w-px bg-[#2A343E] hidden lg:block" />

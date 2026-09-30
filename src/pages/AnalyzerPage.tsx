@@ -1,6 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { ProposedActionRequest, SecurityInspectionReport } from '../server/types.js';
-import { analyzeAction, approveRequest, rejectRequest } from '../services/api.js';
+import { ProposedActionRequest, SecurityInspectionReport, N8nWebhookConfig, N8nWebhookDelivery } from '../server/types.js';
+import {
+  analyzeAction,
+  approveRequest,
+  rejectRequest,
+  fetchN8nIntegration,
+  updateN8nConfig,
+  dispatchToN8n
+} from '../services/api.js';
 import {
   Shield,
   Bot,
@@ -21,7 +28,12 @@ import {
   Layers,
   Sparkles,
   Lock,
-  ArrowRight
+  ArrowRight,
+  Webhook,
+  Copy,
+  Check,
+  Send,
+  ExternalLink
 } from 'lucide-react';
 import { Tooltip } from '../components/Tooltip.js';
 import BorderGlow from '../components/BorderGlow/BorderGlow.jsx';
@@ -137,6 +149,17 @@ export const AnalyzerPage: React.FC<AnalyzerPageProps> = ({
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [approvalModalOpen, setApprovalModalOpen] = useState(false);
   const [approvalLoading, setApprovalLoading] = useState(false);
+  const [n8nConfig, setN8nConfig] = useState<N8nWebhookConfig | null>(null);
+  const [n8nDelivery, setN8nDelivery] = useState<N8nWebhookDelivery | null>(null);
+  const [isDispatchingN8n, setIsDispatchingN8n] = useState(false);
+  const [showN8nPayload, setShowN8nPayload] = useState(false);
+  const [copiedWebhookUrl, setCopiedWebhookUrl] = useState(false);
+
+  useEffect(() => {
+    fetchN8nIntegration()
+      .then(data => setN8nConfig(data.config))
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     if (presetScenario && DEMO_PRESETS[presetScenario]) {
@@ -182,11 +205,12 @@ export const AnalyzerPage: React.FC<AnalyzerPageProps> = ({
         await new Promise(r => setTimeout(r, stepDuration));
       }
 
-      // API call to backend governor
+      // API call to backend governor (which also synchronously dispatches to n8n webhook)
       const report = await analyzeAction(formData);
-      setCurrentStep(8);
+      setCurrentStep(9);
       setActiveStageDetail(stageDescriptions[8]);
       setInspectionResult(report);
+      setN8nDelivery(report.n8n_delivery || null);
       onInspectionComplete(report);
 
       // Contextual toast notification
@@ -282,6 +306,83 @@ export const AnalyzerPage: React.FC<AnalyzerPageProps> = ({
       setApprovalLoading(false);
     }
   };
+
+  const handleToggleN8nMode = async (mode: 'production' | 'test') => {
+    try {
+      const res = await updateN8nConfig({ active_url_type: mode });
+      setN8nConfig(res.config);
+      if (onTriggerToast) {
+        onTriggerToast({
+          type: 'success',
+          title: `n8n Target: ${mode === 'production' ? 'Production' : 'Test Canvas'}`,
+          message: mode === 'production'
+            ? 'https://hindujareddy.app.n8n.cloud/webhook/agent-permission-check'
+            : 'https://hindujareddy.app.n8n.cloud/webhook-test/agent-permission-check'
+        });
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleManualN8nDispatch = async () => {
+    setIsDispatchingN8n(true);
+    try {
+      const payloadToSend = inspectionResult
+        ? {
+            request_id: inspectionResult.request_id,
+            session_id: inspectionResult.session_id,
+            agent_id: inspectionResult.request.agent_id,
+            agent_role: inspectionResult.request.agent_role,
+            action: inspectionResult.request.action,
+            tool: inspectionResult.request.tool,
+            resource: inspectionResult.request.resource,
+            task: inspectionResult.request.task,
+            parameters: inspectionResult.request.parameters,
+            decision: inspectionResult.decision,
+            approval_status: inspectionResult.approval_status,
+            risk_score: inspectionResult.risk.risk_score,
+            risk_level: inspectionResult.risk.risk_level,
+            matched_policy: inspectionResult.policy.matched_policy,
+            policy_reason: inspectionResult.policy.reason,
+            prompt_injection_detected: inspectionResult.prompt_injection.detected
+          }
+        : {
+            agent_id: formData.agent_id,
+            agent_role: formData.agent_role,
+            action: formData.action,
+            tool: formData.tool,
+            resource: formData.resource,
+            task: formData.task,
+            parameters: formData.parameters,
+            reason: formData.reason
+          };
+
+      const res = await dispatchToN8n('agent_permission_check', payloadToSend);
+      setN8nDelivery(res.delivery);
+      setN8nConfig(res.config);
+      if (onTriggerToast) {
+        onTriggerToast({
+          type: res.success ? 'success' : res.delivery.status_code === 404 ? 'warning' : 'error',
+          title: res.success
+            ? `n8n Webhook 200 OK (${res.delivery.duration_ms}ms)`
+            : res.delivery.status_code === 404
+            ? 'n8n Webhook Dispatched (Workflow Standby)'
+            : `n8n Webhook HTTP ${res.delivery.status_code}`,
+          message: res.delivery.hint || res.delivery.target_url
+        });
+      }
+    } catch (err: any) {
+      console.error(err);
+    } finally {
+      setIsDispatchingN8n(false);
+    }
+  };
+
+  const activeWebhookUrl =
+    n8nConfig?.active_url_type === 'test'
+      ? n8nConfig.test_url
+      : n8nConfig?.url || 'https://hindujareddy.app.n8n.cloud/webhook/agent-permission-check';
 
   // 8 Vertical Pipeline Stages
   const pipelineStages = [
@@ -383,6 +484,24 @@ export const AnalyzerPage: React.FC<AnalyzerPageProps> = ({
             : 'DENY'
           : 'WAITING',
       resultText: inspectionResult ? inspectionResult.decision : ''
+    },
+    {
+      id: 'n8n_webhook',
+      name: 'n8n Webhook',
+      icon: Webhook,
+      status:
+        currentStep === 8
+          ? 'PROCESSING'
+          : currentStep >= 9 && n8nDelivery
+          ? n8nDelivery.success
+            ? 'PASS'
+            : 'FLAG'
+          : 'WAITING',
+      resultText: n8nDelivery
+        ? n8nDelivery.success
+          ? `200 OK (${n8nDelivery.duration_ms}ms) → agent-permission-check`
+          : `Dispatched (${n8nDelivery.status_code} • ${n8nDelivery.duration_ms}ms) → agent-permission-check`
+        : ''
     }
   ];
 
@@ -419,6 +538,69 @@ export const AnalyzerPage: React.FC<AnalyzerPageProps> = ({
               </option>
             ))}
           </select>
+        </div>
+      </div>
+
+      {/* Live n8n Cloud Webhook Integration Strip */}
+      <div className="control-panel px-4 py-3 flex flex-col lg:flex-row lg:items-center justify-between gap-3 relative overflow-hidden">
+        <div className="absolute top-0 left-0 right-0 h-[1.5px] bg-gradient-to-r from-[#CBFF70] via-[#AB98FF] to-transparent" />
+        <div className="flex flex-wrap items-center gap-2.5 min-w-0">
+          <span className="px-2 py-0.5 rounded bg-[#CBFF70]/10 border border-[#CBFF70]/30 text-[#CBFF70] font-mono text-[10px] font-semibold flex items-center gap-1.5 shrink-0">
+            <Webhook className="w-3 h-3" />
+            <span>n8n LIVE HOOK</span>
+          </span>
+          <code className="text-xs font-mono text-[#F0F4F8] bg-[#0E1318] px-2.5 py-1 rounded border border-[#2A343E] truncate max-w-full sm:max-w-md md:max-w-xl select-all">
+            {activeWebhookUrl}
+          </code>
+          <button
+            type="button"
+            onClick={() => {
+              navigator.clipboard.writeText(activeWebhookUrl);
+              setCopiedWebhookUrl(true);
+              setTimeout(() => setCopiedWebhookUrl(false), 2000);
+            }}
+            className="p-1.5 rounded bg-[#101419] hover:bg-[#1B232B] border border-[#2A343E] text-[#9DAAB8] hover:text-[#CBFF70] transition-colors cursor-pointer"
+            title="Copy n8n Webhook URL"
+          >
+            {copiedWebhookUrl ? <Check className="w-3.5 h-3.5 text-[#69E2AD]" /> : <Copy className="w-3.5 h-3.5" />}
+          </button>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2 shrink-0">
+          <div className="flex items-center bg-[#0E1318] p-0.5 rounded-lg border border-[#2A343E] text-[11px] font-mono">
+            <button
+              type="button"
+              onClick={() => handleToggleN8nMode('production')}
+              className={`px-2.5 py-1 rounded transition-colors cursor-pointer ${
+                (n8nConfig?.active_url_type ?? 'production') === 'production'
+                  ? 'bg-[#151B21] text-[#CBFF70] font-semibold'
+                  : 'text-[#9DAAB8] hover:text-[#F0F4F8]'
+              }`}
+            >
+              Production (/webhook)
+            </button>
+            <button
+              type="button"
+              onClick={() => handleToggleN8nMode('test')}
+              className={`px-2.5 py-1 rounded transition-colors cursor-pointer ${
+                n8nConfig?.active_url_type === 'test'
+                  ? 'bg-[#151B21] text-[#CBFF70] font-semibold'
+                  : 'text-[#9DAAB8] hover:text-[#F0F4F8]'
+              }`}
+            >
+              Test (/webhook-test)
+            </button>
+          </div>
+
+          <button
+            type="button"
+            onClick={handleManualN8nDispatch}
+            disabled={isDispatchingN8n}
+            className="px-3 py-1.5 rounded-lg bg-[#1B232B] hover:bg-[#232D37] border border-[#CBFF70]/40 text-[#CBFF70] text-xs font-mono font-semibold flex items-center gap-1.5 transition-colors cursor-pointer disabled:opacity-50"
+          >
+            <Send className={`w-3 h-3 ${isDispatchingN8n ? 'animate-pulse' : ''}`} />
+            <span>{isDispatchingN8n ? 'Pinging n8n...' : 'Push to n8n'}</span>
+          </button>
         </div>
       </div>
 
@@ -988,6 +1170,78 @@ export const AnalyzerPage: React.FC<AnalyzerPageProps> = ({
                   ACTION TERMINATED
                 </span>
               </div>
+            </div>
+          )}
+
+          {/* Live n8n Webhook Dispatch Telemetry Card */}
+          {n8nDelivery && (
+            <div className="control-panel p-4 space-y-3 relative overflow-hidden">
+              <div className="absolute top-0 left-0 right-0 h-[1.5px] bg-gradient-to-r from-[#CBFF70] via-[#AB98FF] to-transparent" />
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Webhook className="w-3.5 h-3.5 text-[#CBFF70]" />
+                  <span className="text-xs font-semibold font-mono text-[#F0F4F8]">
+                    n8n Webhook Dispatch
+                  </span>
+                </div>
+                <span
+                  className={`text-[10px] font-mono px-2 py-0.5 rounded border font-semibold ${
+                    n8nDelivery.success
+                      ? 'bg-[#69E2AD]/10 text-[#69E2AD] border-[#69E2AD]/30'
+                      : n8nDelivery.status_code === 404
+                      ? 'bg-[#FFD080]/10 text-[#FFD080] border-[#FFD080]/30'
+                      : 'bg-[#FF8585]/10 text-[#FF8585] border-[#FF8585]/30'
+                  }`}
+                >
+                  {n8nDelivery.success
+                    ? `200 OK • ${n8nDelivery.duration_ms}ms`
+                    : `HTTP ${n8nDelivery.status_code} • ${n8nDelivery.duration_ms}ms`}
+                </span>
+              </div>
+
+              <div className="text-[11px] font-mono text-[#9DAAB8] bg-[#0E1318] p-2 rounded border border-[#2A343E] truncate">
+                POST {n8nDelivery.target_url}
+              </div>
+
+              {n8nDelivery.hint && (
+                <div className="text-[11px] text-[#FFD080] bg-[#FFD080]/10 border border-[#FFD080]/25 rounded p-2 leading-relaxed">
+                  {n8nDelivery.hint}
+                </div>
+              )}
+
+              <div className="flex items-center justify-between pt-1">
+                <button
+                  type="button"
+                  onClick={() => setShowN8nPayload(!showN8nPayload)}
+                  className="text-[11px] font-mono text-[#CBFF70] hover:underline cursor-pointer"
+                >
+                  {showN8nPayload ? 'Hide Webhook Payload' : 'Inspect Webhook Payload'}
+                </button>
+                <button
+                  type="button"
+                  onClick={handleManualN8nDispatch}
+                  disabled={isDispatchingN8n}
+                  className="text-[11px] font-mono text-[#9DAAB8] hover:text-[#F0F4F8] flex items-center gap-1 cursor-pointer"
+                >
+                  <RefreshCw className={`w-3 h-3 ${isDispatchingN8n ? 'animate-spin text-[#CBFF70]' : ''}`} />
+                  <span>Re-send</span>
+                </button>
+              </div>
+
+              {showN8nPayload && (
+                <div className="space-y-2 pt-1">
+                  <pre className="p-2.5 rounded bg-[#0E1318] border border-[#2A343E] text-[10px] font-mono text-[#CBFF70] max-h-40 overflow-y-auto">
+                    {JSON.stringify(n8nDelivery.request_payload, null, 2)}
+                  </pre>
+                  {n8nDelivery.response_body && (
+                    <pre className="p-2.5 rounded bg-[#0E1318] border border-[#2A343E] text-[10px] font-mono text-[#F0F4F8] max-h-32 overflow-y-auto">
+                      {typeof n8nDelivery.response_body === 'string'
+                        ? n8nDelivery.response_body
+                        : JSON.stringify(n8nDelivery.response_body, null, 2)}
+                    </pre>
+                  )}
+                </div>
+              )}
             </div>
           )}
         </div>

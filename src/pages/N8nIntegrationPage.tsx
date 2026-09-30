@@ -648,6 +648,93 @@ export const N8nIntegrationPage: React.FC<N8nIntegrationPageProps> = ({ onShowTo
               </div>
             </div>
           )}
+
+          {/* Ready-to-Import n8n Workflow Blueprint & Bidirectional Webhook Spec */}
+          <div className="control-panel p-5 space-y-3">
+            <div className="flex items-center justify-between pb-2.5 border-b border-[#2A343E]">
+              <div className="flex items-center gap-2">
+                <ShieldCheck className="w-4 h-4 text-[#AB98FF]" />
+                <h3 className="font-display text-sm font-semibold text-[#F0F4F8]">
+                  n8n Canvas Blueprint & Bidirectional Spec
+                </h3>
+              </div>
+              <button
+                onClick={() => {
+                  const blueprint = JSON.stringify(
+                    {
+                      name: 'AEGIS Agent Permission Check',
+                      nodes: [
+                        {
+                          parameters: {
+                            httpMethod: 'POST',
+                            path: 'agent-permission-check',
+                            responseMode: 'responseNode',
+                            options: {}
+                          },
+                          name: 'Agent Permission Webhook',
+                          type: 'n8n-nodes-base.webhook',
+                          typeVersion: 2,
+                          position: [260, 300]
+                        },
+                        {
+                          parameters: {
+                            respondWith: 'json',
+                            responseBody:
+                              '={"status":"VERIFIED","decision": $json.body.decision || "ALLOW","risk_score": $json.body.risk_score || 15,"reason":"Validated by n8n agent-permission-check workflow"}',
+                            options: {}
+                          },
+                          name: 'Respond to AEGIS Governor',
+                          type: 'n8n-nodes-base.respondToWebhook',
+                          typeVersion: 1,
+                          position: [540, 300]
+                        }
+                      ],
+                      connections: {
+                        'Agent Permission Webhook': {
+                          main: [[{ node: 'Respond to AEGIS Governor', type: 'main', index: 0 }]]
+                        }
+                      }
+                    },
+                    null,
+                    2
+                  );
+                  navigator.clipboard.writeText(blueprint);
+                  if (onShowToast) {
+                    onShowToast({
+                      type: 'success',
+                      title: 'n8n Workflow JSON Copied',
+                      message: 'Paste directly (Ctrl+V / ⌘V) inside your hindujareddy.app.n8n.cloud canvas!'
+                    });
+                  }
+                }}
+                className="px-2.5 py-1 rounded bg-[#1B232B] hover:bg-[#232D37] border border-[#AB98FF]/40 text-[#AB98FF] text-[11px] font-mono flex items-center gap-1.5 transition-colors cursor-pointer"
+              >
+                <Copy className="w-3 h-3" />
+                <span>Copy n8n Workflow JSON</span>
+              </button>
+            </div>
+
+            <p className="text-xs text-[#9DAAB8] leading-relaxed">
+              Copy the workflow JSON above and press <kbd className="px-1.5 py-0.5 rounded bg-[#0E1318] border border-[#2A343E] font-mono text-[10px] text-[#CBFF70]">⌘V</kbd> inside your <code className="text-[#CBFF70] font-mono">hindujareddy.app.n8n.cloud</code> editor to instantly create the <code className="text-[#F0F4F8] font-mono">POST /webhook/agent-permission-check</code> node and response handler.
+            </p>
+
+            <div className="p-3 rounded-lg bg-[#0E1318] border border-[#2A343E] space-y-1.5 font-mono text-[11px]">
+              <div className="text-[#9DAAB8] flex items-center justify-between">
+                <span>Outbound Target (AEGIS → n8n Cloud):</span>
+                <span className="text-[#CBFF70]">ACTIVE</span>
+              </div>
+              <div className="text-[#F0F4F8] truncate select-all">
+                POST https://hindujareddy.app.n8n.cloud/webhook/agent-permission-check
+              </div>
+              <div className="pt-1.5 border-t border-[#2A343E]/70 text-[#9DAAB8] flex items-center justify-between">
+                <span>Inbound Callback (n8n Cloud → AEGIS):</span>
+                <span className="text-[#69E2AD]">READY</span>
+              </div>
+              <div className="text-[#DDE5ED] truncate select-all">
+                POST {typeof window !== 'undefined' ? `${window.location.origin}/webhook/agent-permission-check` : '/webhook/agent-permission-check'}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

@@ -149,7 +149,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                         <span className="truncate">{item.label}</span>
                       </div>
 
-                      {item.badge !== undefined && item.badge > 0 && (
+                      {'badge' in item && item.badge !== undefined && item.badge > 0 && (
                         <span className="px-1.5 py-0.5 text-[10px] font-mono font-bold rounded bg-[#FFD080]/15 text-[#FFD080] border border-[#FFD080]/30 shrink-0">
                           {item.badge}
                         </span>

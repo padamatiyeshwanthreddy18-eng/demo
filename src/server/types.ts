@@ -141,6 +141,7 @@ export interface SecurityInspectionReport {
   execution: ExecutionResult;
   latency_ms: number;
   governor_version: string;
+  n8n_delivery?: N8nWebhookDelivery;
 }
 
 export interface PendingApprovalItem {
