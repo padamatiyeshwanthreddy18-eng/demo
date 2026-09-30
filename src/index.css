@@ -2,106 +2,147 @@
 
 @layer base {
   :root {
-    --bg-main: #F6F7F9;
-    --bg-sidebar: #FFFFFF;
-    --bg-panel: #FFFFFF;
-    --bg-surface-secondary: #F1F3F5;
-    --bg-surface-hover: #ECEFF2;
-    --border-subtle: #E2E6EB;
-    --border-strong: #CDD3DB;
-    
-    /* Primary Brand Teal */
-    --primary-teal: #168C82;
-    --primary-teal-hover: #10776F;
-    --primary-teal-soft: #E7F5F3;
-    --primary-teal-nav: #EAF6F4;
-    
-    /* Semantic State Colors */
-    --status-success: #21A67A;
-    --status-success-soft: #E7F7F1;
-    
-    --status-warning: #D99018;
-    --status-warning-soft: #FFF4DE;
-    
-    --status-danger: #E65353;
-    --status-danger-soft: #FDECEC;
-    
-    --status-injection: #8B5CF6;
-    --status-injection-soft: #F2ECFF;
-    
-    --status-info: #4A78C2;
-    --status-info-soft: #EBF2FC;
+    /* Midnight Control Room Design Tokens */
+    --bg-canvas: #0B0E11;
+    --bg-sidebar: #101419;
+    --bg-panel: #151B21;
+    --bg-elevated: #1B232B;
+    --border-control: #2A343E;
+    --border-subtle: #1F2730;
 
-    /* Typography */
-    --text-primary: #18212F;
-    --text-secondary: #596579;
-    --text-muted: #8A94A3;
+    /* Typography Colors */
+    --text-primary: #F0F4F8;
+    --text-secondary: #9DAAB8;
+    --text-muted: #5C6978;
+
+    /* Accents & States */
+    --accent-primary: #CBFF70;      /* Electric Chartreuse */
+    --accent-ai: #AB98FF;           /* Controlled Violet */
+    --status-approved: #69E2AD;     /* Mint Emerald */
+    --status-pending: #FFD080;      /* Warm Gold */
+    --status-denied: #FF8585;       /* Coral Red */
   }
 
   body {
-    background-color: var(--bg-main);
+    background-color: var(--bg-canvas);
     color: var(--text-primary);
-    font-family: 'Inter', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
-  /* Subtle Natural Scrollbar */
+  /* Refined Midnight Scrollbar */
   ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
+    width: 5px;
+    height: 5px;
   }
   ::-webkit-scrollbar-track {
-    background: #F1F3F5;
+    background: #0B0E11;
   }
   ::-webkit-scrollbar-thumb {
-    background: #CDD3DB;
+    background: #2A343E;
     border-radius: 4px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: #8A94A3;
+    background: #3B4856;
   }
 }
 
-/* Panel Styles - Crisp white cards with subtle shadow and border */
-.aegis-panel {
-  background-color: #FFFFFF;
-  border: 1px solid #E2E6EB;
+/* Display Typography */
+.font-display {
+  font-family: 'Space Grotesk', -apple-system, sans-serif;
+  letter-spacing: -0.02em;
+}
+
+.font-mono-data {
+  font-family: 'JetBrains Mono', monospace;
+  font-feature-settings: "tnum" 1;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Midnight Control Room Surfaces */
+.control-panel {
+  background-color: #151B21;
+  border: 1px solid #2A343E;
   border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03), 0 2px 8px rgba(20, 30, 40, 0.02);
+  transition: border-color 180ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 180ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.aegis-panel-elevated {
-  background-color: #FFFFFF;
-  border: 1px solid #CDD3DB;
+.control-panel:hover {
+  border-color: #384654;
+}
+
+.control-panel-elevated {
+  background-color: #1B232B;
+  border: 1px solid #2A343E;
   border-radius: 12px;
-  box-shadow: 0 4px 16px rgba(20, 30, 40, 0.08);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
 }
 
-/* Subtle highlights restricted ONLY to key active states / security outcomes */
-.aegis-glow-teal {
-  box-shadow: 0 2px 12px -2px rgba(22, 140, 130, 0.15);
+/* Distinctive Motif: The "Permission Boundary" Line */
+.permission-boundary-line {
+  position: relative;
 }
 
-.aegis-glow-success {
-  box-shadow: 0 2px 12px -2px rgba(33, 166, 122, 0.18);
+.permission-boundary-line::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: linear-gradient(90deg, #CBFF70 0%, #AB98FF 35%, #2A343E 80%, transparent 100%);
+  opacity: 0.85;
 }
 
-.aegis-glow-warning {
-  box-shadow: 0 2px 12px -2px rgba(217, 144, 24, 0.18);
+.permission-boundary-vertical {
+  position: relative;
 }
 
-.aegis-glow-danger {
-  box-shadow: 0 2px 12px -2px rgba(230, 83, 83, 0.2);
+.permission-boundary-vertical::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(180deg, #CBFF70 0%, #AB98FF 40%, #2A343E 100%);
 }
 
-.aegis-glow-injection {
-  box-shadow: 0 2px 14px -2px rgba(139, 92, 246, 0.2);
+.permission-boundary-glow {
+  box-shadow: 0 0 0 1px #CBFF70, 0 0 16px -2px rgba(203, 255, 112, 0.25);
 }
 
-/* Subtle soft dot background */
-.enterprise-grid {
-  background-image: radial-gradient(#E2E6EB 1px, transparent 1px);
-  background-size: 28px 28px;
+/* Accent Button: Electric Chartreuse Primary */
+.btn-chartreuse {
+  background-color: #CBFF70;
+  color: #0B0E11;
+  font-weight: 600;
+  border-radius: 8px;
+  transition: all 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-chartreuse:hover {
+  background-color: #D8FF8A;
+  box-shadow: 0 0 18px rgba(203, 255, 112, 0.3);
+  transform: translateY(-1px);
+}
+
+.btn-chartreuse:active {
+  transform: translateY(0);
+}
+
+/* Subtle Control Room Grid */
+.control-room-grid {
+  background-image: radial-gradient(rgba(42, 52, 62, 0.45) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* Code Highlighting Block */
+.code-block-midnight {
+  background-color: #0E1318;
+  border: 1px solid #232D37;
+  color: #DDE5ED;
+  font-family: 'JetBrains Mono', monospace;
 }

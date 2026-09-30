@@ -1,69 +1,111 @@
 import React from 'react';
-import { ChevronRight } from 'lucide-react';
+import {
+  ChevronRight,
+  Shield,
+  Zap,
+  Command,
+  Radio,
+  Sparkles,
+  Server
+} from 'lucide-react';
 
 interface TopBarProps {
   activeTab: string;
+  onOpenCommandPalette?: () => void;
+  onQuickEvaluate?: () => void;
 }
 
-export const TopBar: React.FC<TopBarProps> = ({ activeTab }) => {
+export const TopBar: React.FC<TopBarProps> = ({
+  activeTab,
+  onOpenCommandPalette,
+  onQuickEvaluate
+}) => {
   const getBreadcrumbTitle = (tab: string) => {
     switch (tab) {
       case 'overview':
         return 'Overview';
       case 'analyzer':
-        return 'Security / Analyze Action';
+        return 'Governance / Playground & Analyzer';
       case 'monitor':
-        return 'Security / Live Monitor';
+        return 'Governance / Live Monitor';
       case 'approvals':
-        return 'Security / Approvals';
+        return 'Governance / Approvals Escrow';
       case 'alerts':
-        return 'Security / Security Alerts';
+        return 'Governance / Security Alerts';
       case 'agents':
-        return 'Management / Agents';
+        return 'Fleet / Agent Directory';
       case 'policies':
-        return 'Management / Policies';
+        return 'Fleet / Policy Configuration';
       case 'audit':
-        return 'Observability / Audit Logs';
+        return 'Observability / Audit Trail';
       case 'architecture':
-        return 'Observability / Architecture';
+        return 'Observability / System Architecture';
+      case 'threat_veil':
+        return 'Observability / Threat Recon & Veil';
+      case 'n8n':
+        return 'Integrations / n8n Webhook Workflow';
       default:
         return 'Overview';
     }
   };
 
   return (
-    <header className="h-14 bg-white border-b border-[#E2E6EB] px-6 flex items-center justify-between sticky top-0 z-20 select-none shadow-xs">
+    <header className="h-13 bg-[#101419] border-b border-[#2A343E] px-6 flex items-center justify-between sticky top-0 z-20 select-none">
       {/* Breadcrumb Left */}
-      <div className="flex items-center gap-2 text-xs text-[#596579]">
-        <span className="font-semibold text-[#18212F]">AEGIS</span>
-        <ChevronRight className="w-3.5 h-3.5 text-[#8A94A3]" />
-        <span className="text-[#168C82] font-medium">{getBreadcrumbTitle(activeTab)}</span>
+      <div className="flex items-center gap-2 text-xs">
+        <span className="font-mono text-[#5C6978]">Production-US-East</span>
+        <span className="text-[#3B4856]">/</span>
+        <span className="font-semibold text-[#F0F4F8]">{getBreadcrumbTitle(activeTab)}</span>
       </div>
 
-      {/* Engine Status & System Online Right */}
-      <div className="flex items-center gap-6 text-xs text-[#596579]">
-        <div className="hidden lg:flex items-center gap-5">
-          <div className="flex items-center gap-1.5 text-xs text-[#596579]">
+      {/* Center/Right Status & Action */}
+      <div className="flex items-center gap-4 text-xs">
+        {/* Engine Status Indicators */}
+        <div className="hidden lg:flex items-center gap-4 text-[#9DAAB8] font-mono text-[11px]">
+          <div className="flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#69E2AD]" />
             <span>Policy Engine</span>
-            <span className="w-1.5 h-1.5 rounded-full bg-[#21A67A]" />
           </div>
-          <div className="flex items-center gap-1.5 text-xs text-[#596579]">
-            <span>Risk Engine</span>
-            <span className="w-1.5 h-1.5 rounded-full bg-[#21A67A]" />
+          <div className="flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#69E2AD]" />
+            <span>Risk AST</span>
           </div>
-          <div className="flex items-center gap-1.5 text-xs text-[#596579]">
-            <span>Audit Engine</span>
-            <span className="w-1.5 h-1.5 rounded-full bg-[#21A67A]" />
+          <div className="flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#CBFF70]" />
+            <span>n8n Webhook</span>
           </div>
         </div>
 
-        <div className="h-3.5 w-px bg-[#E2E6EB] hidden lg:block" />
+        <div className="h-3.5 w-px bg-[#2A343E] hidden lg:block" />
 
-        {/* SYSTEM ONLINE: Soft green pill */}
-        <div className="flex items-center gap-2 px-2.5 py-1 rounded-[5px] bg-[#E7F7F1] border border-[#21A67A]/30 text-[#21A67A] text-xs font-medium">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#21A67A] animate-pulse" />
-          <span className="tracking-wide text-[11px] font-semibold">SYSTEM ONLINE</span>
+        {/* Live Enforcement Badge */}
+        <div className="flex items-center gap-2 px-2.5 py-1 rounded bg-[#151B21] border border-[#2A343E] text-[#69E2AD] text-[11px] font-mono font-medium">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#69E2AD] animate-pulse" />
+          <span>LIVE ENFORCEMENT</span>
         </div>
+
+        {/* Command Menu Button */}
+        {onOpenCommandPalette && (
+          <button
+            onClick={onOpenCommandPalette}
+            className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#151B21] hover:bg-[#1B232B] border border-[#2A343E] text-[#9DAAB8] hover:text-[#F0F4F8] text-[11px] font-mono transition-colors cursor-pointer"
+            title="Open command palette (⌘K)"
+          >
+            <Command className="w-3 h-3 text-[#CBFF70]" />
+            <span>⌘K</span>
+          </button>
+        )}
+
+        {/* Quick Evaluate CTA */}
+        {onQuickEvaluate && (
+          <button
+            onClick={onQuickEvaluate}
+            className="btn-chartreuse px-3 py-1 text-xs flex items-center gap-1.5 cursor-pointer shadow-xs"
+          >
+            <Zap className="w-3.5 h-3.5 fill-[#0B0E11]" />
+            <span>Evaluate action</span>
+          </button>
+        )}
       </div>
     </header>
   );

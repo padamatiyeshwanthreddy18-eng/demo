@@ -12,6 +12,8 @@ import {
   ArrowRight
 } from 'lucide-react';
 import { Tooltip } from '../components/Tooltip.js';
+import LatticeLoader from '../components/LatticeLoader/LatticeLoader.js';
+import ClickSpark from '../components/ClickSpark/ClickSpark.js';
 
 interface ApprovalsPageProps {
   onRefreshMetrics?: () => void;
@@ -85,42 +87,49 @@ export const ApprovalsPage: React.FC<ApprovalsPageProps> = ({ onRefreshMetrics, 
   const pendingCount = approvals.filter(a => a.status === 'PENDING').length;
 
   return (
-    <div className="w-full space-y-6 pb-12">
+    <ClickSpark sparkColor="#CBFF70" sparkRadius={18} sparkSize={8} sparkCount={7}>
+      <div className="w-full space-y-6 pb-12 font-sans selection:bg-[#CBFF70]/20 selection:text-[#CBFF70]">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl font-bold text-[#18212F] tracking-tight flex items-center gap-2.5">
-            <span>Human Approval Queue</span>
+          <div className="flex items-center gap-2 mb-1">
+            <span className="w-2 h-2 rounded-full bg-[#FFD080] animate-pulse" />
+            <span className="text-[11px] font-mono uppercase tracking-wider text-[#FFD080] font-semibold">
+              Escrow Governance
+            </span>
+          </div>
+          <h1 className="font-display text-2xl font-bold text-[#F0F4F8] tracking-tight flex items-center gap-2.5">
+            <span>Human Approval Escrow Queue</span>
             {pendingCount > 0 && (
-              <span className="text-xs font-mono font-semibold px-2 py-0.5 rounded-[5px] bg-[#FFF4DE] text-[#D99018] border border-[#D99018]/30">
+              <span className="text-xs font-mono font-semibold px-2 py-0.5 rounded bg-[#FFD080]/15 text-[#FFD080] border border-[#FFD080]/30">
                 {pendingCount} Pending
               </span>
             )}
           </h1>
-          <p className="text-xs text-[#596579] mt-0.5">
-            High-risk AI actions paused before execution. Review and sign off before tool release.
+          <p className="text-xs text-[#9DAAB8] mt-0.5">
+            High-risk autonomous AI actions paused before execution. Dual-key review and cryptographically logged sign-off.
           </p>
         </div>
 
         {/* Tab & Refresh Controls */}
         <div className="flex items-center gap-2 text-xs">
-          <div className="bg-[#F1F3F5] p-0.5 rounded-[7px] border border-[#E2E6EB] flex items-center">
+          <div className="bg-[#101419] p-0.5 rounded-lg border border-[#2A343E] flex items-center font-mono">
             <button
               onClick={() => setActiveTab('pending')}
-              className={`px-3 py-1.5 rounded-[5px] transition-all cursor-pointer ${
+              className={`px-3 py-1.5 rounded-md transition-all cursor-pointer ${
                 activeTab === 'pending'
-                  ? 'bg-white text-[#116F68] font-semibold shadow-xs'
-                  : 'text-[#596579] hover:text-[#18212F]'
+                  ? 'bg-[#1B232B] text-[#CBFF70] font-semibold border border-[#2A343E]'
+                  : 'text-[#9DAAB8] hover:text-[#F0F4F8]'
               }`}
             >
               Pending ({pendingCount})
             </button>
             <button
               onClick={() => setActiveTab('history')}
-              className={`px-3 py-1.5 rounded-[5px] transition-all cursor-pointer ${
+              className={`px-3 py-1.5 rounded-md transition-all cursor-pointer ${
                 activeTab === 'history'
-                  ? 'bg-white text-[#116F68] font-semibold shadow-xs'
-                  : 'text-[#596579] hover:text-[#18212F]'
+                  ? 'bg-[#1B232B] text-[#CBFF70] font-semibold border border-[#2A343E]'
+                  : 'text-[#9DAAB8] hover:text-[#F0F4F8]'
               }`}
             >
               Review History
@@ -129,27 +138,38 @@ export const ApprovalsPage: React.FC<ApprovalsPageProps> = ({ onRefreshMetrics, 
 
           <button
             onClick={loadData}
-            className="p-1.5 rounded-[7px] bg-white border border-[#CDD3DB] text-[#596579] hover:text-[#18212F] hover:bg-[#F1F3F5] transition-colors cursor-pointer shadow-xs"
+            className="p-1.5 rounded-lg bg-[#151B21] border border-[#2A343E] text-[#9DAAB8] hover:text-[#F0F4F8] hover:bg-[#1B232B] transition-colors cursor-pointer shadow-xs"
             title="Refresh Queue"
           >
-            <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin text-[#CBFF70]' : ''}`} />
           </button>
         </div>
       </div>
 
       {/* Approvals Grid */}
       {loading ? (
-        <div className="py-16 text-center text-xs text-[#8A94A3]">
-          Loading approval queue...
+        <div className="py-20 text-center flex flex-col items-center justify-center">
+          <LatticeLoader
+            status="working"
+            label="Syncing Escrow Queue"
+            pattern="ripple"
+            grid={3}
+            shape="round"
+            cellSize={5}
+            gap={2}
+            fontSize={13}
+            color="#CBFF70"
+            showTimer={true}
+          />
         </div>
       ) : approvals.length === 0 ? (
-        <div className="aegis-panel p-12 text-center flex flex-col items-center justify-center">
-          <CheckCircle2 className="w-8 h-8 text-[#21A67A] mb-2.5" />
-          <h3 className="font-bold text-sm text-[#18212F]">
-            NO PENDING APPROVALS
+        <div className="control-panel p-12 text-center flex flex-col items-center justify-center">
+          <CheckCircle2 className="w-8 h-8 text-[#69E2AD] mb-2.5" />
+          <h3 className="font-bold text-sm text-[#F0F4F8] font-mono">
+            NO PENDING ESCROW APPROVALS
           </h3>
-          <p className="text-xs text-[#596579] mt-1 max-w-sm">
-            All intercepted agent actions have been resolved.
+          <p className="text-xs text-[#9DAAB8] mt-1 max-w-sm">
+            All intercepted agent actions have been resolved under fail-closed security invariants.
           </p>
         </div>
       ) : (
@@ -161,33 +181,33 @@ export const ApprovalsPage: React.FC<ApprovalsPageProps> = ({ onRefreshMetrics, 
             return (
               <div
                 key={item.id}
-                className={`aegis-panel p-4 flex flex-col justify-between transition-all ${
-                  isPending ? 'border-[#D99018]/40 shadow-xs' : 'opacity-75'
+                className={`control-panel p-4 flex flex-col justify-between transition-all ${
+                  isPending ? 'border-[#FFD080]/50 shadow-md' : 'opacity-70'
                 }`}
               >
                 <div>
                   {/* Card Header */}
                   <div className="flex items-start justify-between gap-2 mb-2.5">
                     <div>
-                      <span className="text-[11px] text-[#8A94A3] font-medium">
+                      <span className="text-[11px] text-[#5C6978] font-mono uppercase tracking-wider">
                         {item.agent_role.replace('_', ' ')}
                       </span>
-                      <h3 className="font-semibold text-sm text-[#18212F] truncate max-w-[200px]">
+                      <h3 className="font-semibold text-sm text-[#F0F4F8] truncate max-w-[200px]">
                         {item.agent_name}
                       </h3>
-                      <div className="text-xs font-mono font-medium text-[#168C82]">
+                      <div className="text-xs font-mono font-medium text-[#CBFF70]">
                         {item.agent_id}
                       </div>
                     </div>
 
                     <div className="text-right">
                       <span
-                        className={`text-xs font-mono font-semibold px-2 py-0.5 rounded-[4px] ${
+                        className={`text-xs font-mono font-semibold px-2 py-0.5 rounded border ${
                           item.risk_score >= 71
-                            ? 'bg-[#FDECEC] text-[#E65353] border border-[#E65353]/30'
+                            ? 'bg-[#FF8585]/15 text-[#FF8585] border-[#FF8585]/30'
                             : item.risk_score >= 31
-                            ? 'bg-[#FFF4DE] text-[#D99018] border border-[#D99018]/30'
-                            : 'bg-[#E7F7F1] text-[#21A67A] border border-[#21A67A]/30'
+                            ? 'bg-[#FFD080]/15 text-[#FFD080] border-[#FFD080]/30'
+                            : 'bg-[#69E2AD]/15 text-[#69E2AD] border-[#69E2AD]/30'
                         }`}
                       >
                         Risk {item.risk_score}
@@ -196,34 +216,34 @@ export const ApprovalsPage: React.FC<ApprovalsPageProps> = ({ onRefreshMetrics, 
                   </div>
 
                   {/* Metadata Box */}
-                  <div className="space-y-1.5 p-3 rounded-[7px] bg-[#F6F7F9] border border-[#E2E6EB] text-xs mb-3">
+                  <div className="space-y-1.5 p-3 rounded-lg bg-[#0E1318] border border-[#2A343E] text-xs mb-3 font-mono">
                     <div className="flex justify-between">
-                      <span className="text-[#8A94A3]">Action:</span>
-                      <span className="font-mono text-[#D99018] font-bold">{item.action}</span>
+                      <span className="text-[#5C6978]">Action:</span>
+                      <span className="text-[#FFD080] font-bold">{item.action}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-[#8A94A3]">Tool:</span>
-                      <span className="font-mono text-[#18212F]">{item.tool}</span>
+                      <span className="text-[#5C6978]">Tool:</span>
+                      <span className="text-[#AB98FF]">{item.tool}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-[#8A94A3]">Resource:</span>
-                      <span className="font-mono text-[#18212F] truncate max-w-[150px]">{item.resource}</span>
+                      <span className="text-[#5C6978]">Resource:</span>
+                      <span className="text-[#F0F4F8] truncate max-w-[150px]">{item.resource}</span>
                     </div>
-                    <div className="flex justify-between pt-1 border-t border-[#E2E6EB]">
-                      <span className="text-[#8A94A3]">Policy:</span>
-                      <span className="font-mono text-[#8B5CF6] font-semibold">{item.matched_policy}</span>
+                    <div className="flex justify-between pt-1 border-t border-[#2A343E]">
+                      <span className="text-[#5C6978]">Policy:</span>
+                      <span className="text-[#CBFF70] font-semibold">{item.matched_policy}</span>
                     </div>
                   </div>
 
-                  <div className="text-xs text-[#596579] mb-3 leading-relaxed">
-                    <span className="text-[#8A94A3] font-medium">Reason: </span>
+                  <div className="text-xs text-[#9DAAB8] mb-3 leading-relaxed">
+                    <span className="text-[#5C6978] font-medium">Reason: </span>
                     {item.reason}
                   </div>
                 </div>
 
                 {/* Footer Controls */}
-                <div className="pt-2 border-t border-[#E2E6EB]">
-                  <div className="text-[11px] text-[#8A94A3] font-mono mb-2.5">
+                <div className="pt-2 border-t border-[#2A343E]">
+                  <div className="text-[11px] text-[#5C6978] font-mono mb-2.5">
                     Requested: {new Date(item.timestamp).toLocaleTimeString()}
                   </div>
 
@@ -232,24 +252,24 @@ export const ApprovalsPage: React.FC<ApprovalsPageProps> = ({ onRefreshMetrics, 
                       <button
                         disabled={isProcessing}
                         onClick={() => handleReject(item)}
-                        className="py-1.5 rounded-[7px] border border-[#E65353]/30 hover:bg-[#FDECEC] text-[#E65353] text-xs font-semibold transition-colors cursor-pointer"
+                        className="py-1.5 rounded-lg border border-[#FF8585]/30 hover:bg-[#FF8585]/10 text-[#FF8585] text-xs font-semibold transition-colors cursor-pointer"
                       >
                         Reject
                       </button>
                       <button
                         disabled={isProcessing}
                         onClick={() => setPendingConfirmItem(item)}
-                        className="py-1.5 rounded-[7px] bg-[#21A67A] hover:bg-[#1A8F68] text-white text-xs font-semibold transition-colors cursor-pointer shadow-xs"
+                        className="py-1.5 rounded-lg bg-[#69E2AD] hover:bg-[#7ff2bd] text-[#0B0E11] text-xs font-bold transition-colors cursor-pointer shadow-sm"
                       >
                         Approve & Execute
                       </button>
                     </div>
                   ) : (
-                    <div className="text-xs flex items-center justify-between text-[#596579]">
+                    <div className="text-xs flex items-center justify-between text-[#9DAAB8] font-mono">
                       <span>Status:</span>
                       <span
-                        className={`font-semibold px-2 py-0.5 rounded-[4px] font-mono text-[11px] ${
-                          item.status === 'APPROVED' ? 'text-[#21A67A] bg-[#E7F7F1]' : 'text-[#E65353] bg-[#FDECEC]'
+                        className={`font-semibold px-2 py-0.5 rounded text-[11px] border ${
+                          item.status === 'APPROVED' ? 'text-[#69E2AD] bg-[#69E2AD]/15 border-[#69E2AD]/30' : 'text-[#FF8585] bg-[#FF8585]/15 border-[#FF8585]/30'
                         }`}
                       >
                         {item.status}
@@ -265,35 +285,51 @@ export const ApprovalsPage: React.FC<ApprovalsPageProps> = ({ onRefreshMetrics, 
 
       {/* Confirmation Modal */}
       {pendingConfirmItem && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs">
-          <div className="aegis-panel-elevated p-6 max-w-md w-full border border-[#CDD3DB] shadow-2xl">
-            <div className="flex items-center gap-3 text-[#21A67A] mb-3">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs">
+          <div className="control-panel-elevated p-6 max-w-md w-full border border-[#2A343E] shadow-2xl">
+            <div className="flex items-center gap-3 text-[#69E2AD] mb-3">
               <CheckCircle2 className="w-5 h-5" />
-              <h3 className="font-semibold text-sm text-[#18212F]">
+              <h3 className="font-semibold text-sm text-[#F0F4F8]">
                 Authorize Agent Execution
               </h3>
             </div>
-            <p className="text-xs text-[#596579] leading-relaxed mb-4">
-              This action will be released to the Secure Tool Executor. The agent will gain clearance to execute <code className="text-[#168C82] font-mono font-semibold">{pendingConfirmItem.action}</code> on <code className="text-[#18212F] font-mono">{pendingConfirmItem.resource}</code>.
+            <p className="text-xs text-[#9DAAB8] leading-relaxed mb-4">
+              This action will be released to the Secure Tool Executor. The agent will gain clearance to execute <code className="text-[#CBFF70] font-mono font-semibold">{pendingConfirmItem.action}</code> on <code className="text-[#F0F4F8] font-mono">{pendingConfirmItem.resource}</code>.
             </p>
-            <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-[#E2E6EB]">
+            <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-[#2A343E]">
               <button
                 onClick={() => setPendingConfirmItem(null)}
-                className="px-3.5 py-1.5 rounded-[7px] border border-[#CDD3DB] hover:bg-[#F1F3F5] text-[#596579] text-xs font-medium transition-colors cursor-pointer"
+                className="px-3.5 py-1.5 rounded-lg border border-[#2A343E] hover:bg-[#1B232B] text-[#9DAAB8] text-xs font-medium transition-colors cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 disabled={actionInProgress === pendingConfirmItem.request_id}
                 onClick={() => handleAuthorize(pendingConfirmItem)}
-                className="px-4 py-1.5 rounded-[7px] bg-[#21A67A] hover:bg-[#1A8F68] text-white text-xs font-semibold transition-colors cursor-pointer shadow-xs"
+                className="btn-chartreuse px-4 py-1.5 text-xs font-semibold cursor-pointer shadow-sm min-w-[90px] flex items-center justify-center"
               >
-                {actionInProgress === pendingConfirmItem.request_id ? 'Authorizing...' : 'Authorize'}
+                {actionInProgress === pendingConfirmItem.request_id ? (
+                  <LatticeLoader
+                    status="working"
+                    label="Releasing"
+                    pattern="orbit"
+                    grid={3}
+                    shape="round"
+                    cellSize={3}
+                    gap={1.5}
+                    fontSize={11}
+                    color="#0B0E11"
+                    showTimer={false}
+                  />
+                ) : (
+                  'Authorize'
+                )}
               </button>
             </div>
           </div>
         </div>
       )}
-    </div>
+      </div>
+    </ClickSpark>
   );
 };

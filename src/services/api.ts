@@ -95,3 +95,60 @@ export async function fetchAuditLogs(params?: {
   if (!res.ok) throw new Error('Failed to fetch audit logs');
   return res.json();
 }
+
+export async function fetchN8nIntegration(): Promise<{
+  config: import('../server/types.js').N8nWebhookConfig;
+  deliveries: import('../server/types.js').N8nWebhookDelivery[];
+}> {
+  const res = await fetch('/api/integrations/n8n');
+  if (!res.ok) throw new Error('Failed to fetch n8n webhook status');
+  return res.json();
+}
+
+export async function updateN8nConfig(
+  patch: Partial<import('../server/types.js').N8nWebhookConfig>
+): Promise<{ config: import('../server/types.js').N8nWebhookConfig }> {
+  const res = await fetch('/api/integrations/n8n/config', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(patch)
+  });
+  if (!res.ok) throw new Error('Failed to update n8n webhook configuration');
+  return res.json();
+}
+
+export async function testN8nWebhook(payload?: any): Promise<{
+  success: boolean;
+  delivery: import('../server/types.js').N8nWebhookDelivery;
+  config: import('../server/types.js').N8nWebhookConfig;
+}> {
+  const res = await fetch('/api/integrations/n8n/test', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ payload })
+  });
+  if (!res.ok) throw new Error('Failed to execute n8n webhook test');
+  return res.json();
+}
+
+export async function dispatchToN8n(event: string, payload: any): Promise<{
+  success: boolean;
+  delivery: import('../server/types.js').N8nWebhookDelivery;
+  config: import('../server/types.js').N8nWebhookConfig;
+}> {
+  const res = await fetch('/api/integrations/n8n/dispatch', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ event, payload })
+  });
+  if (!res.ok) throw new Error('Failed to dispatch to n8n webhook');
+  return res.json();
+}
+
+export async function clearN8nDeliveries(): Promise<{ success: boolean }> {
+  const res = await fetch('/api/integrations/n8n/clear', {
+    method: 'POST'
+  });
+  if (!res.ok) throw new Error('Failed to clear n8n delivery history');
+  return res.json();
+}

@@ -17,9 +17,10 @@ import {
   ArrowRight,
   ArrowDown,
   GitFork,
-  X
+  X,
+  Zap,
+  Lock
 } from 'lucide-react';
-import DitherVeil from '../components/DitherVeil/DitherVeil.jsx';
 
 interface StageCard {
   id: string;
@@ -101,70 +102,61 @@ export const ArchitecturePage: React.FC = () => {
   ];
 
   return (
-    <div className="w-full space-y-6 pb-12">
+    <div className="w-full space-y-6 pb-12 font-sans selection:bg-[#CBFF70]/20 selection:text-[#CBFF70]">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl font-bold text-[#18212F] tracking-tight">
-            Security Architecture
+          <div className="flex items-center gap-2 mb-1">
+            <span className="w-2 h-2 rounded-full bg-[#CBFF70] animate-pulse" />
+            <span className="text-[11px] font-mono uppercase tracking-wider text-[#CBFF70] font-semibold">
+              Governor Blueprint
+            </span>
+          </div>
+          <h1 className="font-display text-2xl font-bold text-[#F0F4F8] tracking-tight">
+            Security Architecture & Verification Pipeline
           </h1>
-          <p className="text-xs text-[#596579] mt-0.5">
-            Reveal the runtime controls protecting every agent action before tool execution.
+          <p className="text-xs text-[#9DAAB8] mt-0.5">
+            Deterministic runtime interception layer protecting tools, APIs, and databases before any autonomous code executes.
           </p>
         </div>
       </div>
 
       {/* Main Visual Flow Container */}
-      <div className="relative rounded-[12px] border border-[#E2E6EB] bg-white overflow-hidden p-6 space-y-6 select-none shadow-xs">
-        {/* Subtle daylight texture in background */}
-        <div className="absolute inset-0 opacity-10 pointer-events-none">
-          <DitherVeil
-            src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1400&auto=format&fit=crop"
-            pattern="floyd"
-            pixelSize={3}
-            palette="duotone"
-            inkColor="#E2E6EB"
-            paperColor="#FFFFFF"
-            rimColor="#168C82"
-            rim={0.1}
-            revealRadius={140}
-            softness={0.8}
-            linger={1.0}
-            fit="cover"
-          />
-        </div>
+      <div className="control-panel p-6 sm:p-7 space-y-6 select-none relative overflow-hidden">
+        {/* Permission Boundary Line Motif */}
+        <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-[#CBFF70] via-[#AB98FF] to-transparent opacity-80" />
 
         {/* Level 1: Ingestion Pipeline Nodes */}
-        <div className="relative z-10 flex flex-col sm:flex-row items-center justify-center gap-3 text-xs">
-          <div className="p-3.5 rounded-[8px] bg-[#F6F7F9] border border-[#E2E6EB] w-52 text-center shadow-xs">
-            <User className="w-4 h-4 text-[#596579] mx-auto mb-1.5" />
-            <div className="font-semibold text-[#18212F]">User Request</div>
-            <div className="text-[11px] text-[#8A94A3]">Natural-Language Task</div>
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 text-xs">
+          <div className="p-3.5 rounded-lg bg-[#101419] border border-[#2A343E] w-52 text-center shadow-xs">
+            <User className="w-4 h-4 text-[#9DAAB8] mx-auto mb-1.5" />
+            <div className="font-semibold text-[#F0F4F8]">User Request</div>
+            <div className="text-[11px] text-[#5C6978] font-mono">Natural-Language Task</div>
           </div>
 
-          <ArrowRight className="w-4 h-4 text-[#168C82] hidden sm:block shrink-0" />
-          <ArrowDown className="w-4 h-4 text-[#168C82] sm:hidden shrink-0" />
+          <ArrowRight className="w-4 h-4 text-[#CBFF70] hidden sm:block shrink-0" />
+          <ArrowDown className="w-4 h-4 text-[#CBFF70] sm:hidden shrink-0" />
 
-          <div className="p-3.5 rounded-[8px] bg-[#F6F7F9] border border-[#E2E6EB] w-52 text-center shadow-xs">
-            <Bot className="w-4 h-4 text-[#168C82] mx-auto mb-1.5" />
-            <div className="font-semibold text-[#18212F]">AI Agent</div>
-            <div className="text-[11px] text-[#8A94A3]">Synthesizes Tool Action</div>
+          <div className="p-3.5 rounded-lg bg-[#101419] border border-[#2A343E] w-52 text-center shadow-xs">
+            <Bot className="w-4 h-4 text-[#AB98FF] mx-auto mb-1.5" />
+            <div className="font-semibold text-[#F0F4F8]">AI Agent</div>
+            <div className="text-[11px] text-[#5C6978] font-mono">Synthesizes Tool Call</div>
           </div>
 
-          <ArrowRight className="w-4 h-4 text-[#168C82] hidden sm:block shrink-0" />
-          <ArrowDown className="w-4 h-4 text-[#168C82] sm:hidden shrink-0" />
+          <ArrowRight className="w-4 h-4 text-[#CBFF70] hidden sm:block shrink-0" />
+          <ArrowDown className="w-4 h-4 text-[#CBFF70] sm:hidden shrink-0" />
 
-          <div className="p-3.5 rounded-[8px] bg-[#E7F5F3] border border-[#168C82]/40 w-56 text-center shadow-xs">
-            <Shield className="w-4 h-4 text-[#168C82] mx-auto mb-1.5" />
-            <div className="font-semibold text-[#116F68]">AEGIS Gateway</div>
-            <div className="text-[11px] text-[#168C82] font-medium">Runtime Interception</div>
+          <div className="p-3.5 rounded-lg bg-[#1B232B] border border-[#CBFF70]/50 w-56 text-center shadow-md relative">
+            <Shield className="w-4 h-4 text-[#CBFF70] mx-auto mb-1.5" />
+            <div className="font-semibold text-[#CBFF70] font-mono">AEGIS Governor Gate</div>
+            <div className="text-[11px] text-[#9DAAB8] font-mono">Runtime Interception</div>
           </div>
         </div>
 
         {/* Level 2: Inside AEGIS Security Pipeline Nodes */}
-        <div className="relative z-10 p-4 rounded-[10px] bg-[#F6F7F9] border border-[#E2E6EB]">
-          <div className="text-[11px] font-semibold tracking-wide text-[#596579] uppercase text-center mb-3">
-            Internal AEGIS Verification Pipeline
+        <div className="p-4 rounded-xl bg-[#0E1318] border border-[#2A343E]">
+          <div className="text-[11px] font-mono font-semibold tracking-wider text-[#CBFF70] uppercase text-center mb-3">
+            Internal Invariant Verification Pipeline (8 Stages)
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2">
@@ -174,16 +166,16 @@ export const ArchitecturePage: React.FC = () => {
                 <div
                   key={stage.id}
                   onClick={() => setSelectedStage(stage)}
-                  className="p-2.5 rounded-[7px] bg-white border border-[#E2E6EB] hover:border-[#168C82]/50 hover:bg-[#F6F7F9] transition-all cursor-pointer text-center group flex flex-col justify-between shadow-xs"
+                  className="p-2.5 rounded-lg bg-[#151B21] border border-[#2A343E] hover:border-[#CBFF70]/50 hover:bg-[#1B232B] transition-all cursor-pointer text-center group flex flex-col justify-between"
                 >
                   <div>
-                    <span className="text-[10px] font-mono text-[#8A94A3] block mb-1">0{idx + 1}</span>
-                    <Icon className="w-4 h-4 text-[#168C82] mx-auto mb-1.5 group-hover:scale-105 transition-transform" />
-                    <div className="font-semibold text-xs text-[#18212F] truncate">
+                    <span className="text-[10px] font-mono text-[#5C6978] block mb-1">0{idx + 1}</span>
+                    <Icon className="w-4 h-4 text-[#AB98FF] group-hover:text-[#CBFF70] mx-auto mb-1.5 group-hover:scale-110 transition-all" />
+                    <div className="font-semibold text-xs text-[#F0F4F8] truncate">
                       {stage.name}
                     </div>
                   </div>
-                  <div className="text-[10px] text-[#8A94A3] truncate mt-1">
+                  <div className="text-[10px] text-[#5C6978] truncate mt-1 font-mono">
                     {stage.subtitle}
                   </div>
                 </div>
@@ -192,105 +184,105 @@ export const ArchitecturePage: React.FC = () => {
           </div>
         </div>
 
-        {/* Level 3: 3 Decision Branches */}
-        <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+        {/* Level 3: 3 Decision Branches with Decision Boundary Motif */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs font-mono">
           {/* Branch 1: ALLOW */}
-          <div className="p-4 rounded-[8px] bg-[#E7F7F1] border border-[#21A67A]/30 flex flex-col justify-between shadow-xs">
+          <div className="p-4 rounded-xl bg-[#101419] border border-[#69E2AD]/40 flex flex-col justify-between">
             <div>
-              <div className="flex items-center justify-between text-[#21A67A] font-bold mb-1">
+              <div className="flex items-center justify-between text-[#69E2AD] font-bold mb-1">
                 <span>01. Low Risk (0–30)</span>
                 <CheckCircle2 className="w-4 h-4" />
               </div>
-              <div className="text-[#18212F] font-bold text-sm mb-1">ALLOW</div>
-              <p className="text-xs text-[#596579] leading-relaxed">
-                Action verified within least-privilege boundary. Released immediately to Secure Tool Execution.
+              <div className="text-[#69E2AD] font-bold text-sm mb-1">ALLOW VERDICT</div>
+              <p className="text-xs text-[#9DAAB8] font-sans leading-relaxed">
+                Action verified within least-privilege boundary. Released to Containerized Secure Tool Sandbox.
               </p>
             </div>
-            <div className="mt-3 pt-2 border-t border-[#21A67A]/20 text-[11px] text-[#21A67A] font-semibold">
+            <div className="mt-3 pt-2 border-t border-[#2A343E] text-[11px] text-[#69E2AD] font-semibold">
               → Execute Tool Sandbox
             </div>
           </div>
 
-          {/* Branch 2: HUMAN APPROVAL */}
-          <div className="p-4 rounded-[8px] bg-[#FFF4DE] border border-[#D99018]/30 flex flex-col justify-between shadow-xs">
+          {/* Branch 2: HUMAN APPROVAL ESCROW */}
+          <div className="p-4 rounded-xl bg-[#101419] border border-[#FFD080]/40 flex flex-col justify-between">
             <div>
-              <div className="flex items-center justify-between text-[#D99018] font-bold mb-1">
+              <div className="flex items-center justify-between text-[#FFD080] font-bold mb-1">
                 <span>02. Elevated Risk (31–70)</span>
                 <AlertTriangle className="w-4 h-4" />
               </div>
-              <div className="text-[#18212F] font-bold text-sm mb-1">HUMAN APPROVAL</div>
-              <p className="text-xs text-[#596579] leading-relaxed">
-                Sensitive state mutation or external transmission. Quarantined in escrow until authorized.
+              <div className="text-[#FFD080] font-bold text-sm mb-1">HUMAN ESCROW</div>
+              <p className="text-xs text-[#9DAAB8] font-sans leading-relaxed">
+                Sensitive state mutation or external transmission. Quarantined in escrow until dual-key operator sign-off.
               </p>
             </div>
-            <div className="mt-3 pt-2 border-t border-[#D99018]/20 text-[11px] text-[#D99018] font-semibold">
-              → Review Queue → Execute
+            <div className="mt-3 pt-2 border-t border-[#2A343E] text-[11px] text-[#FFD080] font-semibold">
+              → Escrow Queue → Dual-Key Release
             </div>
           </div>
 
-          {/* Branch 3: DENY */}
-          <div className="p-4 rounded-[8px] bg-[#FDECEC] border border-[#E65353]/30 flex flex-col justify-between shadow-xs">
+          {/* Branch 3: HARD DENY */}
+          <div className="p-4 rounded-xl bg-[#101419] border border-[#FF8585]/40 flex flex-col justify-between">
             <div>
-              <div className="flex items-center justify-between text-[#E65353] font-bold mb-1">
+              <div className="flex items-center justify-between text-[#FF8585] font-bold mb-1">
                 <span>03. Critical Risk (71–100)</span>
                 <XCircle className="w-4 h-4" />
               </div>
-              <div className="text-[#18212F] font-bold text-sm mb-1">DENY</div>
-              <p className="text-xs text-[#596579] leading-relaxed">
-                Prompt injection, unauthorized tool, role spoofing, or critical asset violation. Action blocked.
+              <div className="text-[#FF8585] font-bold text-sm mb-1">HARD DENY BOUNDARY</div>
+              <p className="text-xs text-[#9DAAB8] font-sans leading-relaxed">
+                Prompt injection, unauthorized tool, role spoofing, or credential access. Boundary line terminates execution.
               </p>
             </div>
-            <div className="mt-3 pt-2 border-t border-[#E65353]/20 text-[11px] text-[#E65353] font-semibold">
-              → Block & Terminate
+            <div className="mt-3 pt-2 border-t border-[#2A343E] text-[11px] text-[#FF8585] font-semibold">
+              → Sealed & Blocked Forever
             </div>
           </div>
         </div>
 
         {/* Level 4: Audit & Continuous Monitoring */}
-        <div className="relative z-10 flex flex-col sm:flex-row items-center justify-between p-3.5 rounded-[8px] bg-[#F6F7F9] border border-[#E2E6EB] text-xs text-[#596579] gap-3">
+        <div className="flex flex-col sm:flex-row items-center justify-between p-3.5 rounded-lg bg-[#0E1318] border border-[#2A343E] text-xs text-[#9DAAB8] gap-3 font-mono">
           <div className="flex items-center gap-2">
-            <FileText className="w-4 h-4 text-[#168C82]" />
-            <span className="font-semibold text-[#18212F]">Audit Trail</span>
-            <span className="text-[#CDD3DB]">→</span>
-            <Radio className="w-4 h-4 text-[#21A67A]" />
-            <span className="font-semibold text-[#18212F]">Continuous Monitoring</span>
+            <FileText className="w-4 h-4 text-[#CBFF70]" />
+            <span className="font-semibold text-[#F0F4F8]">Audit Trail (HMAC-SHA256)</span>
+            <span className="text-[#2A343E]">→</span>
+            <Radio className="w-4 h-4 text-[#69E2AD]" />
+            <span className="font-semibold text-[#F0F4F8]">Continuous Live Stream</span>
           </div>
-          <div className="text-[11px] text-[#8A94A3]">
-            All verdicts feed the immutable compliance trail
+          <div className="text-[11px] text-[#5C6978]">
+            All verdicts feed the immutable compliance record
           </div>
         </div>
       </div>
 
       {/* Stage Detail Modal */}
       {selectedStage && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs">
-          <div className="aegis-panel-elevated p-6 max-w-md w-full border border-[#CDD3DB] shadow-2xl">
-            <div className="flex items-center justify-between border-b border-[#E2E6EB] pb-3 mb-3">
-              <div className="flex items-center gap-2 text-[#18212F] font-bold text-sm">
-                <selectedStage.icon className="w-4 h-4 text-[#168C82]" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs">
+          <div className="control-panel-elevated p-6 max-w-md w-full border border-[#2A343E] shadow-2xl relative permission-boundary-vertical">
+            <div className="flex items-center justify-between border-b border-[#2A343E] pb-3 mb-3">
+              <div className="flex items-center gap-2 text-[#F0F4F8] font-bold text-sm font-mono">
+                <selectedStage.icon className="w-4 h-4 text-[#CBFF70]" />
                 <span>{selectedStage.name}</span>
               </div>
               <button
                 onClick={() => setSelectedStage(null)}
-                className="text-[#8A94A3] hover:text-[#18212F] cursor-pointer"
+                className="text-[#9DAAB8] hover:text-[#F0F4F8] p-1 rounded hover:bg-[#1B232B] cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            <p className="text-xs text-[#596579] leading-relaxed mb-3">
+            <p className="text-xs text-[#9DAAB8] leading-relaxed mb-3 font-sans">
               {selectedStage.description}
             </p>
 
-            <div className="p-3 bg-[#E7F5F3] rounded-[7px] border border-[#168C82]/20 text-xs text-[#116F68] mb-4">
-              <span className="text-[#168C82] font-semibold block mb-0.5 text-[11px]">Runtime Invariant:</span>
+            <div className="p-3 bg-[#0E1318] rounded-lg border border-[#2A343E] text-xs text-[#CBFF70] font-mono mb-4">
+              <span className="text-[#5C6978] font-semibold block mb-0.5 text-[11px]">Runtime Invariant:</span>
               {selectedStage.rule}
             </div>
 
             <div className="flex justify-end">
               <button
                 onClick={() => setSelectedStage(null)}
-                className="px-3.5 py-1.5 rounded-[7px] bg-[#F1F3F5] hover:bg-[#E2E6EB] text-xs text-[#18212F] font-semibold transition-colors cursor-pointer"
+                className="px-3.5 py-1.5 rounded-lg bg-[#1B232B] hover:bg-[#232D37] border border-[#2A343E] text-xs text-[#F0F4F8] font-semibold transition-colors cursor-pointer"
               >
                 Close
               </button>

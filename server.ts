@@ -5,13 +5,14 @@ import { store } from './src/server/data_store.js';
 import { runGovernorPipeline } from './src/server/governor.js';
 import { approveRequest, rejectRequest } from './src/server/approval_manager.js';
 import { ProposedActionRequest } from './src/server/types.js';
+import { n8nWebhookService } from './src/server/n8n_webhook.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 async function startServer() {
   const app = express();
-  const PORT = process.env.PORT || 3000;
+  const PORT = Number(process.env.PORT) || 3000;
 
   app.use(express.json());
 
@@ -43,6 +44,10 @@ async function startServer() {
       }
 
       const report = runGovernorPipeline(payload);
+
+      // Asynchronously forward to n8n webhook workflow
+      n8nWebhookService.forwardInspection(report);
+
       return res.json(report);
     } catch (err: any) {
       console.error('Governor error:', err);
@@ -95,6 +100,10 @@ async function startServer() {
       const requestId = req.params.id;
       const supervisor = req.body?.supervisor || 'SOC Security Supervisor (Level 3)';
       const result = approveRequest(requestId, supervisor);
+
+      // Forward approval to n8n webhook
+      n8nWebhookService.forwardApprovalDecision(requestId, 'APPROVED', supervisor, result);
+
       res.json({
         success: true,
         message: `Request ${requestId} approved successfully. Tool action executed in sandbox.`,
@@ -111,6 +120,10 @@ async function startServer() {
       const requestId = req.params.id;
       const supervisor = req.body?.supervisor || 'SOC Security Supervisor (Level 3)';
       const result = rejectRequest(requestId, supervisor);
+
+      // Forward rejection to n8n webhook
+      n8nWebhookService.forwardApprovalDecision(requestId, 'REJECTED', supervisor, result);
+
       res.json({
         success: true,
         message: `Request ${requestId} permanently rejected. Execution terminated.`,
@@ -138,6 +151,84 @@ async function startServer() {
     }
   });
 
+  // 10. n8n Agent Permission Check Integration Endpoints
+  app.get('/api/integrations/n8n', (req, res) => {
+    try {
+      res.json({
+        config: n8nWebhookService.getConfig(),
+        deliveries: n8nWebhookService.getDeliveries()
+      });
+    } catch (err: any) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+  app.post('/api/integrations/n8n/config', (req, res) => {
+    try {
+      const updated = n8nWebhookService.updateConfig(req.body);
+      res.json({
+        success: true,
+        config: updated
+      });
+    } catch (err: any) {
+      res.status(400).json({ error: err.message });
+    }
+  });
+
+  app.post('/api/integrations/n8n/test', async (req, res) => {
+    try {
+      const customPayload = req.body?.payload || {
+        agent_id: 'database-agent-01',
+        agent_role: 'database_agent',
+        action: 'select_records',
+        tool: 'database',
+        resource: 'customers_table',
+        parameters: { limit: 25 },
+        decision: 'ALLOW',
+        risk_score: 18,
+        risk_level: 'LOW',
+        matched_policy: 'POL-DB-SELECT-ALLOW',
+        policy_reason: 'Read-only customer query within safe parameters',
+        timestamp: new Date().toISOString()
+      };
+
+      const result = await n8nWebhookService.dispatch('manual_test', customPayload);
+      res.json({
+        success: result.success,
+        delivery: result,
+        config: n8nWebhookService.getConfig()
+      });
+    } catch (err: any) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+  app.post('/api/integrations/n8n/dispatch', async (req, res) => {
+    try {
+      const { event = 'agent_permission_check', payload } = req.body;
+      if (!payload) {
+        return res.status(400).json({ error: 'payload is required' });
+      }
+      const result = await n8nWebhookService.dispatch(event, payload);
+      res.json({
+        success: result.success,
+        delivery: result,
+        config: n8nWebhookService.getConfig()
+      });
+    } catch (err: any) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+  app.post('/api/integrations/n8n/clear', (req, res) => {
+    try {
+      n8nWebhookService.clearDeliveries();
+      res.json({ success: true });
+    } catch (err: any) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
   // Vite middleware in dev or static files in prod
   const isProd = process.env.NODE_ENV === 'production';
   if (!isProd) {
@@ -154,8 +245,8 @@ async function startServer() {
     });
   }
 
-  app.listen(PORT, () => {
-    console.log(`[AEGIS-AI] Agent Permission Governor running on http://localhost:${PORT}`);
+  app.listen(PORT, '0.0.0.0', () => {
+    console.log(`[AEGIS-AI] Agent Permission Governor running on http://0.0.0.0:${PORT}`);
   });
 }
 

@@ -11,7 +11,8 @@ import {
   Database,
   Mail,
   RefreshCw,
-  X
+  X,
+  ArrowRight
 } from 'lucide-react';
 import { Tooltip } from '../components/Tooltip.js';
 
@@ -58,24 +59,30 @@ export const AgentsPage: React.FC = () => {
   };
 
   return (
-    <div className="w-full space-y-6 pb-12">
+    <div className="w-full space-y-6 pb-12 font-sans selection:bg-[#CBFF70]/20 selection:text-[#CBFF70]">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl font-bold text-[#18212F] tracking-tight">
-            Agent Directory
+          <div className="flex items-center gap-2 mb-1">
+            <span className="w-2 h-2 rounded-full bg-[#CBFF70] animate-pulse" />
+            <span className="text-[11px] font-mono uppercase tracking-wider text-[#CBFF70] font-semibold">
+              Fleet Governance
+            </span>
+          </div>
+          <h1 className="font-display text-2xl font-bold text-[#F0F4F8] tracking-tight">
+            Autonomous Agent Fleet Directory
           </h1>
-          <p className="text-xs text-[#596579] mt-0.5">
-            Registered autonomous agents and their deterministic least-privilege capability boundaries.
+          <p className="text-xs text-[#9DAAB8] mt-0.5">
+            Registered autonomous agents, cryptographic identities, and deterministic least-privilege capability boundaries.
           </p>
         </div>
 
         <button
           onClick={loadAgents}
-          className="p-1.5 rounded-[7px] bg-white border border-[#CDD3DB] text-[#596579] hover:text-[#18212F] hover:bg-[#F1F3F5] transition-colors cursor-pointer self-start sm:self-auto shadow-xs"
+          className="p-1.5 rounded-lg bg-[#151B21] border border-[#2A343E] text-[#9DAAB8] hover:text-[#F0F4F8] hover:bg-[#1B232B] transition-colors cursor-pointer self-start sm:self-auto shadow-xs"
           title="Refresh directory"
         >
-          <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
+          <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin text-[#CBFF70]' : ''}`} />
         </button>
       </div>
 
@@ -89,30 +96,32 @@ export const AgentsPage: React.FC = () => {
             <div
               key={agent.id}
               onClick={() => setSelectedAgent(agent)}
-              className={`aegis-panel p-4 flex flex-col justify-between transition-all cursor-pointer hover:border-[#168C82]/50 hover:bg-[#F6F7F9] ${
-                !isActive ? 'opacity-65' : ''
+              className={`control-panel p-4 flex flex-col justify-between transition-all cursor-pointer hover:border-[#CBFF70]/50 hover:bg-[#1B232B] ${
+                !isActive ? 'opacity-60' : ''
               }`}
             >
               <div>
                 {/* Header */}
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-[7px] bg-[#E7F5F3] border border-[#168C82]/25 flex items-center justify-center text-[#168C82] shrink-0">
+                    <div className="w-8 h-8 rounded-lg bg-[#101419] border border-[#2A343E] flex items-center justify-center text-[#CBFF70] shrink-0">
                       <Icon className="w-4 h-4" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-sm text-[#18212F]">
+                      <h3 className="font-semibold text-sm text-[#F0F4F8]">
                         {agent.name}
                       </h3>
-                      <span className="text-xs font-mono font-medium text-[#168C82]">
+                      <span className="text-xs font-mono font-medium text-[#CBFF70]">
                         {agent.id}
                       </span>
                     </div>
                   </div>
 
                   <span
-                    className={`text-[10px] font-mono font-semibold px-2 py-0.5 rounded-[4px] ${
-                      isActive ? 'bg-[#E7F7F1] text-[#21A67A] border border-[#21A67A]/30' : 'bg-[#FDECEC] text-[#E65353] border border-[#E65353]/30'
+                    className={`text-[10px] font-mono font-semibold px-2 py-0.5 rounded border ${
+                      isActive
+                        ? 'bg-[#69E2AD]/15 text-[#69E2AD] border-[#69E2AD]/30'
+                        : 'bg-[#FF8585]/15 text-[#FF8585] border-[#FF8585]/30'
                     }`}
                   >
                     {agent.status.toUpperCase()}
@@ -120,33 +129,33 @@ export const AgentsPage: React.FC = () => {
                 </div>
 
                 {/* Role & Trust */}
-                <div className="space-y-1.5 text-xs bg-[#F6F7F9] p-3 rounded-[7px] border border-[#E2E6EB] mb-3">
+                <div className="space-y-1.5 text-xs bg-[#0E1318] p-3 rounded-lg border border-[#2A343E] mb-3 font-mono">
                   <div className="flex justify-between">
-                    <span className="text-[#8A94A3]">Role:</span>
-                    <span className="text-[#18212F] font-medium">{agent.role.replace('_', ' ')}</span>
+                    <span className="text-[#5C6978]">Role:</span>
+                    <span className="text-[#F0F4F8] font-medium">{agent.role.replace('_', ' ')}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-[#8A94A3]">Trust Level:</span>
-                    <span className="text-[#168C82] font-semibold">{getTrustLabel(agent.trust_level)} ({agent.trust_level}/5)</span>
+                    <span className="text-[#5C6978]">Trust Level:</span>
+                    <span className="text-[#CBFF70] font-semibold">{getTrustLabel(agent.trust_level)} ({agent.trust_level}/5)</span>
                   </div>
-                  <div className="flex justify-between pt-1 border-t border-[#E2E6EB]">
-                    <span className="text-[#8A94A3]">Permissions:</span>
-                    <span className="text-[#21A67A] font-semibold">{agent.allowed_actions.length} allowed</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-[#8A94A3]">Escrow Required:</span>
-                    <span className="text-[#D99018] font-semibold">{agent.approval_actions.length} approval</span>
+                  <div className="flex justify-between pt-1 border-t border-[#2A343E]">
+                    <span className="text-[#5C6978]">Permissions:</span>
+                    <span className="text-[#69E2AD] font-semibold">{agent.allowed_actions.length} allowed</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-[#8A94A3]">Denied:</span>
-                    <span className="text-[#E65353] font-semibold">{agent.denied_actions.length} blocked</span>
+                    <span className="text-[#5C6978]">Escrow Required:</span>
+                    <span className="text-[#FFD080] font-semibold">{agent.approval_actions.length} approval</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-[#5C6978]">Denied:</span>
+                    <span className="text-[#FF8585] font-semibold">{agent.denied_actions.length} blocked</span>
                   </div>
                 </div>
               </div>
 
-              <div className="pt-2 border-t border-[#E2E6EB] text-xs text-[#168C82] flex items-center justify-between font-semibold">
+              <div className="pt-2 border-t border-[#2A343E] text-xs text-[#CBFF70] flex items-center justify-between font-semibold font-mono">
                 <span>View Identity Policy</span>
-                <span>→</span>
+                <ArrowRight className="w-3.5 h-3.5" />
               </div>
             </div>
           );
@@ -155,52 +164,52 @@ export const AgentsPage: React.FC = () => {
 
       {/* Slide-over Detail Drawer */}
       {selectedAgent && (
-        <div className="fixed inset-0 z-50 flex items-center justify-end bg-black/40 backdrop-blur-xs">
-          <div className="w-full max-w-md h-full bg-white border-l border-[#CDD3DB] p-6 overflow-y-auto space-y-4 shadow-2xl">
-            <div className="flex items-center justify-between border-b border-[#E2E6EB] pb-3">
+        <div className="fixed inset-0 z-50 flex items-center justify-end bg-black/70 backdrop-blur-xs">
+          <div className="w-full max-w-md h-full bg-[#151B21] border-l border-[#2A343E] p-6 overflow-y-auto space-y-4 shadow-2xl relative permission-boundary-vertical">
+            <div className="flex items-center justify-between border-b border-[#2A343E] pb-3">
               <div className="flex items-center gap-2">
-                <Users className="w-4 h-4 text-[#168C82]" />
-                <h3 className="font-semibold text-sm text-[#18212F]">{selectedAgent.name}</h3>
+                <Users className="w-4 h-4 text-[#CBFF70]" />
+                <h3 className="font-semibold text-sm text-[#F0F4F8] font-mono">{selectedAgent.name}</h3>
               </div>
               <button
                 onClick={() => setSelectedAgent(null)}
-                className="text-[#8A94A3] hover:text-[#18212F] cursor-pointer"
+                className="text-[#9DAAB8] hover:text-[#F0F4F8] p-1 rounded hover:bg-[#1B232B] cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            <div className="space-y-4 text-xs">
-              <div className="p-3 bg-[#F6F7F9] rounded-[8px] border border-[#E2E6EB] space-y-2">
+            <div className="space-y-4 text-xs font-mono">
+              <div className="p-3 bg-[#0E1318] rounded-lg border border-[#2A343E] space-y-2">
                 <div className="flex justify-between">
-                  <span className="text-[#8A94A3]">Agent ID:</span>
-                  <span className="text-[#18212F] font-mono font-semibold">{selectedAgent.id}</span>
+                  <span className="text-[#5C6978]">Agent ID:</span>
+                  <span className="text-[#CBFF70] font-bold">{selectedAgent.id}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-[#8A94A3]">Role:</span>
-                  <span className="text-[#18212F] font-medium">{selectedAgent.role.replace('_', ' ')}</span>
+                  <span className="text-[#5C6978]">Role:</span>
+                  <span className="text-[#F0F4F8]">{selectedAgent.role.replace('_', ' ')}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-[#8A94A3]">Status:</span>
-                  <span className={selectedAgent.status === 'active' ? 'text-[#21A67A] font-bold' : 'text-[#E65353] font-bold'}>
+                  <span className="text-[#5C6978]">Status:</span>
+                  <span className={selectedAgent.status === 'active' ? 'text-[#69E2AD] font-bold' : 'text-[#FF8585] font-bold'}>
                     {selectedAgent.status.toUpperCase()}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-[#8A94A3]">Trust Rating:</span>
-                  <span className="text-[#168C82] font-semibold">{getTrustLabel(selectedAgent.trust_level)} ({selectedAgent.trust_level}/5)</span>
+                  <span className="text-[#5C6978]">Trust Rating:</span>
+                  <span className="text-[#CBFF70] font-semibold">{getTrustLabel(selectedAgent.trust_level)} ({selectedAgent.trust_level}/5)</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-[#8A94A3]">Registration Date:</span>
-                  <span className="text-[#596579] font-mono">{new Date(selectedAgent.created_at).toLocaleDateString()}</span>
+                  <span className="text-[#5C6978]">Registration:</span>
+                  <span className="text-[#9DAAB8]">{new Date(selectedAgent.created_at).toLocaleDateString()}</span>
                 </div>
               </div>
 
               <div>
-                <span className="text-[#18212F] font-semibold block mb-1.5">Authorized Tools</span>
+                <span className="text-[#F0F4F8] font-semibold block mb-1.5 font-sans">Authorized Tools</span>
                 <div className="flex flex-wrap gap-1.5">
                   {selectedAgent.allowed_tools.map(tool => (
-                    <span key={tool} className="px-2 py-0.5 bg-[#F1F3F5] border border-[#E2E6EB] rounded-[5px] text-[#18212F] font-mono text-[11px]">
+                    <span key={tool} className="px-2 py-0.5 bg-[#101419] border border-[#2A343E] rounded text-[#AB98FF] text-[11px]">
                       {tool}
                     </span>
                   ))}
@@ -208,12 +217,12 @@ export const AgentsPage: React.FC = () => {
               </div>
 
               <div>
-                <span className="text-[#21A67A] font-semibold block mb-1.5 flex items-center gap-1.5">
+                <span className="text-[#69E2AD] font-semibold block mb-1.5 flex items-center gap-1.5 font-sans">
                   <CheckCircle2 className="w-3.5 h-3.5" /> Allowed Actions
                 </span>
                 <div className="flex flex-wrap gap-1.5">
                   {selectedAgent.allowed_actions.map(act => (
-                    <span key={act} className="px-2 py-0.5 bg-[#E7F7F1] border border-[#21A67A]/25 text-[#21A67A] rounded-[5px] font-mono text-[11px] font-medium">
+                    <span key={act} className="px-2 py-0.5 bg-[#69E2AD]/15 border border-[#69E2AD]/30 text-[#69E2AD] rounded text-[11px]">
                       {act}
                     </span>
                   ))}
@@ -221,28 +230,28 @@ export const AgentsPage: React.FC = () => {
               </div>
 
               <div>
-                <span className="text-[#D99018] font-semibold block mb-1.5 flex items-center gap-1.5">
+                <span className="text-[#FFD080] font-semibold block mb-1.5 flex items-center gap-1.5 font-sans">
                   <Clock className="w-3.5 h-3.5" /> Escrow Required Actions
                 </span>
                 <div className="flex flex-wrap gap-1.5">
                   {selectedAgent.approval_actions.map(act => (
-                    <span key={act} className="px-2 py-0.5 bg-[#FFF4DE] border border-[#D99018]/25 text-[#D99018] rounded-[5px] font-mono text-[11px] font-medium">
+                    <span key={act} className="px-2 py-0.5 bg-[#FFD080]/15 border border-[#FFD080]/30 text-[#FFD080] rounded text-[11px]">
                       {act}
                     </span>
                   ))}
                   {selectedAgent.approval_actions.length === 0 && (
-                    <span className="text-[#8A94A3] text-xs">None configured</span>
+                    <span className="text-[#5C6978] text-xs">None configured</span>
                   )}
                 </div>
               </div>
 
               <div>
-                <span className="text-[#E65353] font-semibold block mb-1.5 flex items-center gap-1.5">
-                  <XCircle className="w-3.5 h-3.5" /> Denied Actions (Hard Enforcement)
+                <span className="text-[#FF8585] font-semibold block mb-1.5 flex items-center gap-1.5 font-sans">
+                  <XCircle className="w-3.5 h-3.5" /> Denied Actions (Hard Block)
                 </span>
                 <div className="flex flex-wrap gap-1.5">
                   {selectedAgent.denied_actions.map(act => (
-                    <span key={act} className="px-2 py-0.5 bg-[#FDECEC] border border-[#E65353]/25 text-[#E65353] rounded-[5px] font-mono text-[11px] font-medium">
+                    <span key={act} className="px-2 py-0.5 bg-[#FF8585]/15 border border-[#FF8585]/30 text-[#FF8585] rounded text-[11px]">
                       {act}
                     </span>
                   ))}
@@ -250,17 +259,17 @@ export const AgentsPage: React.FC = () => {
               </div>
 
               <div>
-                <span className="text-[#18212F] font-semibold block mb-1">Operational Scope</span>
-                <p className="text-[#596579] text-xs leading-relaxed p-3 bg-[#F6F7F9] rounded-[8px] border border-[#E2E6EB]">
+                <span className="text-[#F0F4F8] font-semibold block mb-1 font-sans">Operational Scope</span>
+                <p className="text-[#9DAAB8] text-xs leading-relaxed p-3 bg-[#0E1318] rounded-lg border border-[#2A343E] font-sans">
                   {selectedAgent.description}
                 </p>
               </div>
             </div>
 
-            <div className="pt-3 border-t border-[#E2E6EB]">
+            <div className="pt-3 border-t border-[#2A343E]">
               <button
                 onClick={() => setSelectedAgent(null)}
-                className="w-full py-2 rounded-[7px] bg-[#F1F3F5] hover:bg-[#E2E6EB] text-xs font-semibold text-[#18212F] cursor-pointer"
+                className="w-full py-2 rounded-lg bg-[#1B232B] hover:bg-[#232D37] border border-[#2A343E] text-xs font-semibold text-[#F0F4F8] cursor-pointer"
               >
                 Close Drawer
               </button>

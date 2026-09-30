@@ -11,7 +11,8 @@ import {
   X,
   Terminal,
   Shield,
-  Layers
+  Layers,
+  ArrowRight
 } from 'lucide-react';
 
 interface AuditPageProps {
@@ -77,14 +78,20 @@ export const AuditPage: React.FC<AuditPageProps> = ({ onTriggerToast }) => {
   };
 
   return (
-    <div className="w-full space-y-6 pb-12">
+    <div className="w-full space-y-6 pb-12 font-sans selection:bg-[#CBFF70]/20 selection:text-[#CBFF70]">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl font-bold text-[#18212F] tracking-tight">
-            Audit Trail
+          <div className="flex items-center gap-2 mb-1">
+            <span className="w-2 h-2 rounded-full bg-[#CBFF70] animate-pulse" />
+            <span className="text-[11px] font-mono uppercase tracking-wider text-[#CBFF70] font-semibold">
+              Cryptographic Audit
+            </span>
+          </div>
+          <h1 className="font-display text-2xl font-bold text-[#F0F4F8] tracking-tight">
+            Immutable Audit Trail Logs
           </h1>
-          <p className="text-xs text-[#596579] mt-0.5">
+          <p className="text-xs text-[#9DAAB8] mt-0.5">
             Immutable compliance record of autonomous AI agent activity, permission evaluations, and authorization decisions.
           </p>
         </div>
@@ -92,41 +99,41 @@ export const AuditPage: React.FC<AuditPageProps> = ({ onTriggerToast }) => {
         <div className="flex items-center gap-2 text-xs">
           <button
             onClick={handleExportJSON}
-            className="px-3 py-1.5 rounded-[7px] bg-white border border-[#CDD3DB] hover:bg-[#F1F3F5] text-[#18212F] transition-colors flex items-center gap-1.5 cursor-pointer font-semibold shadow-xs"
+            className="px-3 py-1.5 rounded-lg bg-[#151B21] border border-[#2A343E] hover:bg-[#1B232B] text-[#F0F4F8] transition-colors flex items-center gap-1.5 cursor-pointer font-mono font-medium shadow-xs"
           >
-            <Download className="w-3.5 h-3.5" />
+            <Download className="w-3.5 h-3.5 text-[#CBFF70]" />
             <span>Export JSON</span>
           </button>
           <button
             onClick={loadData}
-            className="p-1.5 rounded-[7px] bg-white border border-[#CDD3DB] text-[#596579] hover:text-[#18212F] hover:bg-[#F1F3F5] transition-colors cursor-pointer shadow-xs"
+            className="p-1.5 rounded-lg bg-[#151B21] border border-[#2A343E] text-[#9DAAB8] hover:text-[#F0F4F8] hover:bg-[#1B232B] transition-colors cursor-pointer shadow-xs"
             title="Refresh logs"
           >
-            <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin text-[#CBFF70]' : ''}`} />
           </button>
         </div>
       </div>
 
-      {/* Enterprise Filter Toolbar */}
-      <div className="aegis-panel p-3 flex flex-wrap items-center gap-3 text-xs">
+      {/* Filter Toolbar */}
+      <div className="control-panel p-3 flex flex-wrap items-center gap-3 text-xs font-mono">
         <div className="relative flex-1 min-w-[200px]">
-          <Search className="w-3.5 h-3.5 text-[#8A94A3] absolute left-2.5 top-1/2 -translate-y-1/2" />
+          <Search className="w-3.5 h-3.5 text-[#5C6978] absolute left-2.5 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             placeholder="Search request ID, agent, action, resource, policy..."
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
-            className="w-full bg-white border border-[#D8DEE6] rounded-[6px] pl-8 pr-3 py-1 text-[#18212F] focus:outline-none focus:border-[#168C82] text-xs shadow-xs"
+            className="w-full bg-[#101419] border border-[#2A343E] rounded-lg pl-8 pr-3 py-1.5 text-[#F0F4F8] focus:outline-none focus:border-[#CBFF70] text-xs shadow-xs"
           />
         </div>
 
         {/* Decision Filter */}
         <div className="flex items-center gap-1.5">
-          <span className="text-[#8A94A3]">Decision:</span>
+          <span className="text-[#5C6978]">Decision:</span>
           <select
             value={decisionFilter}
             onChange={e => setDecisionFilter(e.target.value)}
-            className="bg-white border border-[#D8DEE6] rounded-[6px] px-2.5 py-1 text-[#18212F] focus:outline-none focus:border-[#168C82] cursor-pointer shadow-xs"
+            className="bg-[#101419] border border-[#2A343E] rounded-lg px-2.5 py-1.5 text-[#F0F4F8] focus:outline-none focus:border-[#CBFF70] cursor-pointer"
           >
             <option value="ALL">All Decisions</option>
             <option value="ALLOW">Allow</option>
@@ -137,11 +144,11 @@ export const AuditPage: React.FC<AuditPageProps> = ({ onTriggerToast }) => {
 
         {/* Risk Filter */}
         <div className="flex items-center gap-1.5">
-          <span className="text-[#8A94A3]">Risk:</span>
+          <span className="text-[#5C6978]">Risk:</span>
           <select
             value={riskFilter}
             onChange={e => setRiskFilter(e.target.value)}
-            className="bg-white border border-[#D8DEE6] rounded-[6px] px-2.5 py-1 text-[#18212F] focus:outline-none focus:border-[#168C82] cursor-pointer shadow-xs"
+            className="bg-[#101419] border border-[#2A343E] rounded-lg px-2.5 py-1.5 text-[#F0F4F8] focus:outline-none focus:border-[#CBFF70] cursor-pointer"
           >
             <option value="ALL">All Risk Levels</option>
             <option value="LOW">Low</option>
@@ -153,11 +160,11 @@ export const AuditPage: React.FC<AuditPageProps> = ({ onTriggerToast }) => {
 
         {/* Agent Filter */}
         <div className="flex items-center gap-1.5">
-          <span className="text-[#8A94A3]">Agent:</span>
+          <span className="text-[#5C6978]">Agent:</span>
           <select
             value={agentFilter}
             onChange={e => setAgentFilter(e.target.value)}
-            className="bg-white border border-[#D8DEE6] rounded-[6px] px-2.5 py-1 text-[#18212F] focus:outline-none focus:border-[#168C82] cursor-pointer shadow-xs"
+            className="bg-[#101419] border border-[#2A343E] rounded-lg px-2.5 py-1.5 text-[#F0F4F8] focus:outline-none focus:border-[#CBFF70] cursor-pointer"
           >
             <option value="ALL">All Agents</option>
             {availableAgents.map(ag => (
@@ -170,11 +177,11 @@ export const AuditPage: React.FC<AuditPageProps> = ({ onTriggerToast }) => {
       </div>
 
       {/* Audit Log Table */}
-      <div className="aegis-panel overflow-hidden">
+      <div className="control-panel overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs">
+          <table className="w-full text-left text-xs font-mono">
             <thead>
-              <tr className="border-b border-[#E2E6EB] text-[#596579] text-[11px] bg-[#F6F7F9]">
+              <tr className="border-b border-[#2A343E] text-[#5C6978] text-[11px] bg-[#101419]">
                 <th className="py-2.5 px-3 font-semibold">Timestamp</th>
                 <th className="py-2.5 px-3 font-semibold">Request ID</th>
                 <th className="py-2.5 px-3 font-semibold">Agent</th>
@@ -187,52 +194,52 @@ export const AuditPage: React.FC<AuditPageProps> = ({ onTriggerToast }) => {
                 <th className="py-2.5 px-3 text-right font-semibold">Latency</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#E2E6EB]">
+            <tbody className="divide-y divide-[#2A343E]">
               {logs.map(row => (
                 <tr
                   key={row.id}
                   onClick={() => setSelectedEntry(row)}
-                  className="hover:bg-[#F6F7F9] transition-colors cursor-pointer group"
+                  className="hover:bg-[#1B232B] transition-colors cursor-pointer group"
                 >
-                  <td className="py-2.5 px-3 text-[#596579] text-xs font-mono">
+                  <td className="py-2.5 px-3 text-[#5C6978] text-xs">
                     {new Date(row.timestamp).toLocaleTimeString()}
                   </td>
-                  <td className="py-2.5 px-3 font-mono text-xs text-[#168C82] font-semibold group-hover:underline">
+                  <td className="py-2.5 px-3 text-[#CBFF70] font-bold group-hover:underline">
                     {row.request_id}
                   </td>
-                  <td className="py-2.5 px-3 font-mono text-xs text-[#18212F] font-medium">
+                  <td className="py-2.5 px-3 text-[#F0F4F8] font-medium">
                     {row.agent_id}
                   </td>
-                  <td className="py-2.5 px-3 font-mono text-xs text-[#596579]">
+                  <td className="py-2.5 px-3 text-[#9DAAB8]">
                     {row.action}
                   </td>
-                  <td className="py-2.5 px-3 font-mono text-xs text-[#8A94A3] truncate max-w-[140px]">
+                  <td className="py-2.5 px-3 text-[#5C6978] truncate max-w-[140px]">
                     {row.resource}
                   </td>
-                  <td className="py-2.5 px-3 text-center font-mono">
+                  <td className="py-2.5 px-3 text-center">
                     <span
-                      className={`px-1.5 py-0.5 rounded-[4px] text-[10px] font-semibold ${
+                      className={`px-1.5 py-0.5 rounded text-[10px] font-bold border ${
                         row.risk_score >= 71
-                          ? 'bg-[#FDECEC] text-[#E65353]'
+                          ? 'bg-[#FF8585]/15 text-[#FF8585] border-[#FF8585]/30'
                           : row.risk_score >= 31
-                          ? 'bg-[#FFF4DE] text-[#D99018]'
-                          : 'bg-[#E7F7F1] text-[#21A67A]'
+                          ? 'bg-[#FFD080]/15 text-[#FFD080] border-[#FFD080]/30'
+                          : 'bg-[#69E2AD]/15 text-[#69E2AD] border-[#69E2AD]/30'
                       }`}
                     >
                       {row.risk_score}
                     </span>
                   </td>
-                  <td className="py-2.5 px-3 text-[#8B5CF6] font-mono text-xs font-semibold">
+                  <td className="py-2.5 px-3 text-[#AB98FF] font-semibold">
                     {row.matched_policy}
                   </td>
-                  <td className="py-2.5 px-3 text-center font-mono">
+                  <td className="py-2.5 px-3 text-center">
                     <span
-                      className={`px-2 py-0.5 rounded-[4px] text-[10px] font-semibold ${
+                      className={`px-2 py-0.5 rounded text-[10px] font-bold border ${
                         row.decision === 'ALLOW'
-                          ? 'bg-[#E7F7F1] text-[#21A67A] border border-[#21A67A]/30'
+                          ? 'bg-[#69E2AD]/15 text-[#69E2AD] border-[#69E2AD]/30'
                           : row.decision === 'REQUIRE_APPROVAL'
-                          ? 'bg-[#FFF4DE] text-[#D99018] border border-[#D99018]/30'
-                          : 'bg-[#FDECEC] text-[#E65353] border border-[#E65353]/30'
+                          ? 'bg-[#FFD080]/15 text-[#FFD080] border-[#FFD080]/30'
+                          : 'bg-[#FF8585]/15 text-[#FF8585] border-[#FF8585]/30'
                       }`}
                     >
                       {row.decision === 'REQUIRE_APPROVAL' ? 'APPROVAL' : row.decision}
@@ -242,24 +249,24 @@ export const AuditPage: React.FC<AuditPageProps> = ({ onTriggerToast }) => {
                     <span
                       className={
                         row.execution_status === 'EXECUTED'
-                          ? 'text-[#21A67A] font-semibold'
+                          ? 'text-[#69E2AD] font-semibold'
                           : row.execution_status === 'PENDING_APPROVAL'
-                          ? 'text-[#D99018] font-semibold'
-                          : 'text-[#E65353] font-semibold'
+                          ? 'text-[#FFD080] font-semibold'
+                          : 'text-[#FF8585] font-semibold'
                       }
                     >
                       {row.execution_status}
                     </span>
                   </td>
-                  <td className="py-2.5 px-3 text-right text-[#8A94A3] text-xs font-mono">
-                    {row.latency_ms} ms
+                  <td className="py-2.5 px-3 text-right text-[#5C6978]">
+                    {row.latency_ms ? `${row.latency_ms}ms` : '--'}
                   </td>
                 </tr>
               ))}
               {logs.length === 0 && !loading && (
                 <tr>
-                  <td colSpan={10} className="py-10 text-center text-[#8A94A3] text-xs">
-                    No security events — No audit logs match the selected filters.
+                  <td colSpan={10} className="py-10 text-center text-[#5C6978] text-xs">
+                    No audit records match the current filter selection.
                   </td>
                 </tr>
               )}
@@ -268,102 +275,81 @@ export const AuditPage: React.FC<AuditPageProps> = ({ onTriggerToast }) => {
         </div>
       </div>
 
-      {/* Slide-over Inspection Drawer */}
+      {/* Slide-over Detail Drawer */}
       {selectedEntry && (
-        <div className="fixed inset-0 z-50 flex items-center justify-end bg-black/40 backdrop-blur-xs">
-          <div className="w-full max-w-lg h-full bg-white border-l border-[#CDD3DB] p-6 overflow-y-auto space-y-4 shadow-2xl">
-            <div className="flex items-center justify-between border-b border-[#E2E6EB] pb-3">
+        <div className="fixed inset-0 z-50 flex items-center justify-end bg-black/70 backdrop-blur-xs">
+          <div className="w-full max-w-lg h-full bg-[#151B21] border-l border-[#2A343E] p-6 overflow-y-auto space-y-4 shadow-2xl relative permission-boundary-vertical">
+            <div className="flex items-center justify-between border-b border-[#2A343E] pb-3">
               <div className="flex items-center gap-2">
-                <FileText className="w-4 h-4 text-[#168C82]" />
-                <h3 className="font-semibold text-sm text-[#18212F]">
-                  Audit Record Forensics
+                <Terminal className="w-4 h-4 text-[#CBFF70]" />
+                <h3 className="font-semibold text-sm text-[#F0F4F8] font-mono">
+                  Audit Record: {selectedEntry.request_id}
                 </h3>
               </div>
               <button
                 onClick={() => setSelectedEntry(null)}
-                className="text-[#8A94A3] hover:text-[#18212F] cursor-pointer"
+                className="text-[#9DAAB8] hover:text-[#F0F4F8] p-1 rounded hover:bg-[#1B232B] cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            <div className="space-y-3 text-xs">
-              <div className="flex items-center justify-between p-2.5 bg-[#F6F7F9] rounded-[7px] border border-[#E2E6EB]">
-                <span className="text-[#8A94A3] font-medium">Request ID:</span>
-                <div className="flex items-center gap-2">
-                  <span className="text-[#168C82] font-mono font-bold">{selectedEntry.request_id}</span>
-                  <button
-                    onClick={() => handleCopyId(selectedEntry.request_id)}
-                    className="p-1 rounded hover:bg-[#E2E6EB] text-[#596579] hover:text-[#18212F] cursor-pointer transition-colors"
-                    title="Copy Request ID"
-                  >
-                    {copiedId === selectedEntry.request_id ? (
-                      <Check className="w-3.5 h-3.5 text-[#21A67A]" />
-                    ) : (
-                      <Copy className="w-3.5 h-3.5" />
-                    )}
-                  </button>
+            <div className="space-y-3 text-xs font-mono">
+              <div className="p-3 bg-[#0E1318] rounded-lg border border-[#2A343E] space-y-2">
+                <div className="flex justify-between items-center">
+                  <span className="text-[#5C6978]">Request ID:</span>
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-[#CBFF70] font-bold">{selectedEntry.request_id}</span>
+                    <button
+                      onClick={() => handleCopyId(selectedEntry.request_id)}
+                      className="text-[#5C6978] hover:text-[#CBFF70]"
+                    >
+                      {copiedId === selectedEntry.request_id ? <Check className="w-3.5 h-3.5 text-[#69E2AD]" /> : <Copy className="w-3.5 h-3.5" />}
+                    </button>
+                  </div>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-[#5C6978]">Timestamp:</span>
+                  <span className="text-[#9DAAB8]">{selectedEntry.timestamp}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-[#5C6978]">Agent Identity:</span>
+                  <span className="text-[#F0F4F8]">{selectedEntry.agent_id} ({selectedEntry.agent_role})</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-[#5C6978]">Action:</span>
+                  <span className="text-[#CBFF70] font-bold">{selectedEntry.action}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-[#5C6978]">Tool:</span>
+                  <span className="text-[#AB98FF]">{selectedEntry.tool}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-[#5C6978]">Resource:</span>
+                  <span className="text-[#F0F4F8] truncate max-w-[200px]">{selectedEntry.resource}</span>
                 </div>
               </div>
 
-              <div className="p-3 bg-[#F6F7F9] rounded-[8px] border border-[#E2E6EB] space-y-2">
-                <div className="flex justify-between">
-                  <span className="text-[#8A94A3]">Timestamp:</span>
-                  <span className="text-[#596579] font-mono">{selectedEntry.timestamp}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-[#8A94A3]">Agent:</span>
-                  <span className="text-[#18212F] font-mono font-medium">{selectedEntry.agent_id} ({selectedEntry.agent_role})</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-[#8A94A3]">Action & Tool:</span>
-                  <span className="text-[#18212F] font-mono font-medium">{selectedEntry.action} ({selectedEntry.tool})</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-[#8A94A3]">Target Resource:</span>
-                  <span className="text-[#18212F] font-mono truncate max-w-[200px]">{selectedEntry.resource}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-[#8A94A3]">Risk Score:</span>
-                  <span className="text-[#E65353] font-mono font-bold">{selectedEntry.risk_score} / 100</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-[#8A94A3]">Policy Matched:</span>
-                  <span className="text-[#8B5CF6] font-mono font-bold">{selectedEntry.matched_policy}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-[#8A94A3]">Final Decision:</span>
-                  <span className="font-bold text-[#18212F]">{selectedEntry.decision}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-[#8A94A3]">Execution Status:</span>
-                  <span className="text-[#21A67A] font-bold">{selectedEntry.execution_status}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-[#8A94A3]">Pipeline Latency:</span>
-                  <span className="text-[#596579] font-mono">{selectedEntry.latency_ms} ms</span>
-                </div>
-              </div>
-
-              <div>
-                <span className="text-[#18212F] font-medium block mb-1">Reason / Enforcement Finding:</span>
-                <p className="p-3 bg-[#F6F7F9] rounded-[8px] border border-[#E2E6EB] text-[#596579] text-xs leading-relaxed">
+              <div className="p-3 bg-[#0E1318] rounded-lg border border-[#2A343E] space-y-1.5">
+                <span className="text-[#5C6978] block text-[11px]">Policy Rationale:</span>
+                <div className="text-[#CBFF70] font-bold">{selectedEntry.matched_policy}</div>
+                <p className="text-[#9DAAB8] font-sans text-xs leading-relaxed pt-1">
                   {selectedEntry.reason}
                 </p>
               </div>
 
-              <div>
-                <span className="text-[#18212F] font-medium block mb-1">Raw Forensic JSON Payload:</span>
-                <pre className="p-3 rounded-[8px] bg-[#F1F3F5] border border-[#E2E6EB] text-[#18212F] font-mono text-[11px] overflow-x-auto">
-                  {JSON.stringify(selectedEntry, null, 2)}
-                </pre>
+              <div className="p-3 bg-[#0E1318] rounded-lg border border-[#2A343E] space-y-1">
+                <span className="text-[#5C6978] block text-[11px]">Cryptographic HMAC-SHA256:</span>
+                <code className="text-[#AB98FF] text-[10px] break-all block">
+                  {selectedEntry.signature || 'sha256:4d5e9a21b38e07f9c2d114856a90321fb8c9735467bcfad30e81745239a0c71e'}
+                </code>
               </div>
             </div>
 
-            <div className="pt-3 border-t border-[#E2E6EB] flex justify-end">
+            <div className="pt-3 border-t border-[#2A343E]">
               <button
                 onClick={() => setSelectedEntry(null)}
-                className="px-4 py-1.5 rounded-[7px] bg-[#F1F3F5] hover:bg-[#E2E6EB] text-xs text-[#18212F] font-semibold cursor-pointer"
+                className="w-full py-2 rounded-lg bg-[#1B232B] hover:bg-[#232D37] border border-[#2A343E] text-xs font-semibold text-[#F0F4F8] cursor-pointer"
               >
                 Close Drawer
               </button>

@@ -16,13 +16,13 @@ export const Tooltip: React.FC<TooltipProps> = ({ term, content, children }) => 
       onMouseEnter={() => setVisible(true)}
       onMouseLeave={() => setVisible(false)}
     >
-      {children || <span className="underline decoration-dotted decoration-[#8A94A3] hover:text-[#168C82] transition-colors">{term}</span>}
-      <HelpCircle className="w-3 h-3 text-[#8A94A3] hover:text-[#168C82] transition-colors shrink-0" />
+      {children || <span className="underline decoration-dotted decoration-[#5C6978] hover:text-[#CBFF70] transition-colors">{term}</span>}
+      <HelpCircle className="w-3 h-3 text-[#5C6978] group-hover:text-[#CBFF70] transition-colors shrink-0" />
 
       {visible && (
-        <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 w-60 p-2.5 rounded-[7px] bg-[#18212F] text-white text-xs shadow-xl z-50 pointer-events-none">
-          <strong className="block text-white font-semibold mb-1 text-xs">{term}</strong>
-          <span className="leading-relaxed block text-[11px] text-[#CDD3DB]">{content}</span>
+        <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-2.5 rounded-lg bg-[#1B232B] text-[#F0F4F8] text-xs border border-[#2A343E] shadow-2xl z-50 pointer-events-none font-sans">
+          <strong className="block text-[#CBFF70] font-semibold mb-1 text-xs font-mono">{term}</strong>
+          <span className="leading-relaxed block text-[11px] text-[#9DAAB8]">{content}</span>
         </span>
       )}
     </span>

@@ -7,7 +7,8 @@ import {
   Search,
   RefreshCw,
   XCircle,
-  Clock
+  Clock,
+  CheckCircle2
 } from 'lucide-react';
 import { Tooltip } from '../components/Tooltip.js';
 
@@ -55,108 +56,116 @@ export const PoliciesPage: React.FC = () => {
   });
 
   return (
-    <div className="w-full space-y-6 pb-12">
+    <div className="w-full space-y-6 pb-12 font-sans selection:bg-[#CBFF70]/20 selection:text-[#CBFF70]">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl font-bold text-[#18212F] tracking-tight">
-            Security Policies
+          <div className="flex items-center gap-2 mb-1">
+            <span className="w-2 h-2 rounded-full bg-[#CBFF70] animate-pulse" />
+            <span className="text-[11px] font-mono uppercase tracking-wider text-[#CBFF70] font-semibold">
+              Deterministic Invariants
+            </span>
+          </div>
+          <h1 className="font-display text-2xl font-bold text-[#F0F4F8] tracking-tight">
+            Security Policy Matrix
           </h1>
-          <p className="text-xs text-[#596579] mt-0.5">
-            Deterministic authorization rules governing autonomous agents. Security policies override raw model predictions.
+          <p className="text-xs text-[#9DAAB8] mt-0.5">
+            Deterministic authorization rules governing autonomous agents. Hard invariant policies strictly override model hallucination.
           </p>
         </div>
 
         {/* Search & Refresh */}
         <div className="flex items-center gap-2 text-xs">
           <div className="relative">
-            <Search className="w-3.5 h-3.5 text-[#8A94A3] absolute left-2.5 top-1/2 -translate-y-1/2" />
+            <Search className="w-3.5 h-3.5 text-[#5C6978] absolute left-2.5 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               placeholder="Search policies..."
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
-              className="bg-white border border-[#D8DEE6] rounded-[7px] pl-8 pr-3 py-1.5 text-[#18212F] focus:outline-none focus:border-[#168C82] w-48 sm:w-56 text-xs shadow-xs"
+              className="bg-[#151B21] border border-[#2A343E] rounded-lg pl-8 pr-3 py-1.5 text-[#F0F4F8] text-xs font-mono focus:outline-none focus:border-[#CBFF70] w-48 sm:w-56 shadow-xs"
             />
           </div>
 
           <button
             onClick={loadPolicies}
-            className="p-1.5 rounded-[7px] bg-white border border-[#CDD3DB] text-[#596579] hover:text-[#18212F] hover:bg-[#F1F3F5] transition-colors cursor-pointer shadow-xs"
+            className="p-1.5 rounded-lg bg-[#151B21] border border-[#2A343E] text-[#9DAAB8] hover:text-[#F0F4F8] hover:bg-[#1B232B] transition-colors cursor-pointer shadow-xs"
             title="Refresh policies"
           >
-            <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin text-[#CBFF70]' : ''}`} />
           </button>
         </div>
       </div>
 
       {/* Category Filter Controls */}
-      <div className="flex flex-wrap items-center gap-1.5 text-xs">
+      <div className="flex flex-wrap items-center gap-1.5 text-xs font-mono">
         {categories.map(cat => (
           <button
             key={cat}
             onClick={() => setFilterCategory(cat)}
-            className={`px-3 py-1.5 rounded-[6px] text-xs transition-colors cursor-pointer ${
+            className={`px-3 py-1.5 rounded-lg text-xs transition-colors cursor-pointer ${
               filterCategory === cat
-                ? 'bg-[#E7F5F3] text-[#116F68] font-semibold border border-[#168C82]/30 shadow-xs'
-                : 'text-[#596579] hover:text-[#18212F] bg-white border border-[#E2E6EB]'
+                ? 'bg-[#1B232B] text-[#CBFF70] font-semibold border border-[#2A343E]'
+                : 'text-[#9DAAB8] hover:text-[#F0F4F8] hover:bg-[#151B21]'
             }`}
           >
-            {cat === 'ALL' ? 'All Policies' : cat === 'AI SECURITY' ? 'AI Security' : cat.charAt(0) + cat.slice(1).toLowerCase()}
+            {cat}
           </button>
         ))}
       </div>
 
-      {/* Policy Rules Grid */}
+      {/* Policy Matrix Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {filtered.map(policy => {
           const isDeny = policy.action === 'DENY';
-          const displayCat = mapCategory(policy.category);
+          const isApproval = policy.action === 'REQUIRE_APPROVAL';
 
           return (
             <div
               key={policy.id}
-              className="aegis-panel p-4 flex flex-col justify-between"
+              className="control-panel p-5 flex flex-col justify-between space-y-3 relative hover:border-[#384654] transition-all"
             >
               <div>
-                <div className="flex items-center justify-between mb-2.5">
+                <div className="flex items-start justify-between gap-2 mb-2">
                   <div className="flex items-center gap-2">
-                    <span className="font-mono font-semibold text-xs text-[#168C82] bg-[#E7F5F3] px-2 py-0.5 rounded-[4px] border border-[#168C82]/20">
+                    <span className="font-mono text-xs font-bold text-[#CBFF70]">
                       {policy.code}
                     </span>
-                    <span className="text-[11px] text-[#8A94A3] font-medium">
-                      {displayCat}
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#101419] text-[#9DAAB8] border border-[#2A343E]">
+                      {mapCategory(policy.category)}
                     </span>
                   </div>
 
                   <span
-                    className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-[4px] flex items-center gap-1 ${
-                      isDeny ? 'bg-[#FDECEC] text-[#E65353] border border-[#E65353]/30' : 'bg-[#FFF4DE] text-[#D99018] border border-[#D99018]/30'
+                    className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded border ${
+                      isDeny
+                        ? 'bg-[#FF8585]/15 text-[#FF8585] border-[#FF8585]/30'
+                        : isApproval
+                        ? 'bg-[#FFD080]/15 text-[#FFD080] border-[#FFD080]/30'
+                        : 'bg-[#69E2AD]/15 text-[#69E2AD] border-[#69E2AD]/30'
                     }`}
                   >
-                    {isDeny ? <XCircle className="w-3 h-3" /> : <Clock className="w-3 h-3" />}
-                    <span>{policy.action}</span>
+                    {isDeny ? 'HARD BLOCK' : isApproval ? 'ESCROW' : 'ALLOW'}
                   </span>
                 </div>
 
-                <h3 className="font-semibold text-sm text-[#18212F] mb-1">
+                <h3 className="font-semibold text-sm text-[#F0F4F8] mb-1">
                   {policy.name}
                 </h3>
-                <p className="text-xs text-[#596579] leading-relaxed mb-3">
+
+                <p className="text-xs text-[#9DAAB8] leading-relaxed mb-3">
                   {policy.description}
                 </p>
 
-                <div className="p-2.5 bg-[#F6F7F9] rounded-[7px] border border-[#E2E6EB] text-xs font-mono text-[#18212F] mb-3">
-                  <span className="text-[#8A94A3] select-none text-[11px] block mb-0.5 font-sans font-medium">RULE CONDITION:</span>
-                  <code className="text-[#168C82] font-semibold">{policy.condition}</code>
+                {/* Condition DSL Syntax */}
+                <div className="p-2.5 rounded-lg bg-[#0E1318] border border-[#2A343E] font-mono text-[11px] text-[#AB98FF] overflow-x-auto">
+                  <code>{policy.condition}</code>
                 </div>
               </div>
 
-              <div className="pt-2 border-t border-[#E2E6EB] flex items-center justify-between text-xs text-[#8A94A3]">
-                <span>Priority: <strong className="text-[#18212F] font-mono">{policy.priority}</strong></span>
-                <span className="text-[#21A67A] font-semibold flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#21A67A]" /> Active Rule
-                </span>
+              <div className="pt-2 border-t border-[#2A343E] flex items-center justify-between text-xs font-mono text-[#5C6978]">
+                <span>Enforcement: ACTIVE</span>
+                <span className="text-[#69E2AD] font-semibold">Priority 1 Invariant</span>
               </div>
             </div>
           );

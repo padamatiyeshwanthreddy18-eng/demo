@@ -24,6 +24,8 @@ import {
   ArrowRight
 } from 'lucide-react';
 import { Tooltip } from '../components/Tooltip.js';
+import BorderGlow from '../components/BorderGlow/BorderGlow.jsx';
+import LatticeLoader from '../components/LatticeLoader/LatticeLoader.js';
 
 interface AnalyzerPageProps {
   onInspectionComplete: (report: SecurityInspectionReport) => void;
@@ -385,28 +387,34 @@ export const AnalyzerPage: React.FC<AnalyzerPageProps> = ({
   ];
 
   return (
-    <div className="w-full space-y-6 pb-12">
+    <div className="w-full space-y-6 pb-12 font-sans selection:bg-[#CBFF70]/20 selection:text-[#CBFF70]">
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl font-bold text-[#18212F] tracking-tight">
-            Action Analyzer
+          <div className="flex items-center gap-2 mb-1">
+            <span className="w-2 h-2 rounded-full bg-[#CBFF70] animate-pulse" />
+            <span className="text-[11px] font-mono uppercase tracking-wider text-[#CBFF70] font-semibold">
+              Live Evaluation Sandbox
+            </span>
+          </div>
+          <h1 className="font-display text-2xl font-bold text-[#F0F4F8] tracking-tight">
+            Action Analyzer & AST Inspector
           </h1>
-          <p className="text-xs text-[#596579] mt-0.5">
-            Intercept autonomous AI agent requests before execution. Verify permissions, detect adversarial manipulation, and enforce deterministic policy rules.
+          <p className="text-xs text-[#9DAAB8] mt-0.5">
+            Intercept autonomous AI agent requests before execution. Verify least-privilege permissions, detect adversarial manipulation, and enforce deterministic policy rules.
           </p>
         </div>
 
         {/* Demo Selector */}
         <div className="flex items-center gap-2 text-xs">
-          <span className="text-[#596579] font-medium">Demo Scenario:</span>
+          <span className="text-[#9DAAB8] font-medium font-mono text-[11px]">Scenario:</span>
           <select
             value={selectedDemoKey}
             onChange={handleSelectDemo}
-            className="bg-white border border-[#D8DEE6] rounded-[7px] px-3 py-1.5 text-[#18212F] focus:outline-none focus:border-[#168C82] cursor-pointer shadow-xs"
+            className="bg-[#151B21] border border-[#2A343E] rounded-lg px-3 py-1.5 text-[#F0F4F8] text-xs font-mono focus:outline-none focus:border-[#CBFF70] cursor-pointer shadow-xs"
           >
             {Object.entries(DEMO_PRESETS).map(([key, demo]) => (
-              <option key={key} value={key}>
+              <option key={key} value={key} className="bg-[#151B21] text-[#F0F4F8]">
                 {demo.title}
               </option>
             ))}
@@ -421,13 +429,13 @@ export const AnalyzerPage: React.FC<AnalyzerPageProps> = ({
         {/* ==================================================
             1. REQUEST (4 Cols)
             ================================================== */}
-        <div className="lg:col-span-4 aegis-panel p-5 space-y-4">
-          <div className="border-b border-[#E2E6EB] pb-2.5 flex items-center justify-between">
-            <span className="text-xs font-semibold tracking-wide text-[#18212F] uppercase">
-              Agent Request
+        <div className="lg:col-span-4 control-panel p-5 space-y-4">
+          <div className="border-b border-[#2A343E] pb-2.5 flex items-center justify-between">
+            <span className="text-xs font-semibold tracking-wide text-[#F0F4F8] uppercase font-mono">
+              Agent Request Proposal
             </span>
-            <span className="text-[10px] font-mono font-medium text-[#168C82] bg-[#E7F5F3] px-2 py-0.5 rounded-[4px] border border-[#168C82]/20">
-              Pre-Execution
+            <span className="text-[10px] font-mono font-medium text-[#CBFF70] bg-[#CBFF70]/10 px-2 py-0.5 rounded border border-[#CBFF70]/20">
+              PRE-EXECUTION
             </span>
           </div>
 
@@ -435,66 +443,66 @@ export const AnalyzerPage: React.FC<AnalyzerPageProps> = ({
             {/* Agent ID & Role */}
             <div className="grid grid-cols-2 gap-2.5">
               <div>
-                <label className="text-[#596579] block mb-1 text-[11px] font-medium">Agent ID</label>
+                <label className="text-[#9DAAB8] block mb-1 text-[11px]">Agent ID</label>
                 <input
                   type="text"
                   value={formData.agent_id}
                   onChange={e => setFormData({ ...formData, agent_id: e.target.value })}
-                  className="w-full bg-white border border-[#D8DEE6] rounded-[7px] px-2.5 py-1.5 text-[#18212F] font-mono focus:border-[#168C82] focus:outline-none focus:ring-2 focus:ring-[#168C82]/10 text-xs shadow-xs"
+                  className="w-full bg-[#101419] border border-[#2A343E] rounded-lg px-2.5 py-1.5 text-[#F0F4F8] font-mono focus:border-[#CBFF70] focus:outline-none text-xs"
                 />
               </div>
               <div>
-                <label className="text-[#596579] block mb-1 text-[11px] font-medium">Agent Role</label>
+                <label className="text-[#9DAAB8] block mb-1 text-[11px]">Agent Role</label>
                 <input
                   type="text"
                   value={formData.agent_role}
                   onChange={e => setFormData({ ...formData, agent_role: e.target.value })}
-                  className="w-full bg-white border border-[#D8DEE6] rounded-[7px] px-2.5 py-1.5 text-[#18212F] font-mono focus:border-[#168C82] focus:outline-none focus:ring-2 focus:ring-[#168C82]/10 text-xs shadow-xs"
+                  className="w-full bg-[#101419] border border-[#2A343E] rounded-lg px-2.5 py-1.5 text-[#F0F4F8] font-mono focus:border-[#CBFF70] focus:outline-none text-xs"
                 />
               </div>
             </div>
 
             {/* Task */}
             <div>
-              <label className="text-[#596579] block mb-1 text-[11px] font-medium">User Task / Goal</label>
+              <label className="text-[#9DAAB8] block mb-1 text-[11px]">User Task / Goal</label>
               <textarea
                 rows={2}
                 value={formData.task}
                 onChange={e => setFormData({ ...formData, task: e.target.value })}
-                className="w-full bg-white border border-[#D8DEE6] rounded-[7px] px-2.5 py-1.5 text-[#18212F] focus:border-[#168C82] focus:outline-none focus:ring-2 focus:ring-[#168C82]/10 text-xs leading-relaxed shadow-xs"
+                className="w-full bg-[#101419] border border-[#2A343E] rounded-lg px-2.5 py-1.5 text-[#F0F4F8] focus:border-[#CBFF70] focus:outline-none text-xs leading-relaxed"
               />
             </div>
 
             {/* Action & Tool */}
             <div className="grid grid-cols-2 gap-2.5">
               <div>
-                <label className="text-[#596579] block mb-1 text-[11px] font-medium">Proposed Action</label>
+                <label className="text-[#9DAAB8] block mb-1 text-[11px]">Proposed Action</label>
                 <input
                   type="text"
                   value={formData.action}
                   onChange={e => setFormData({ ...formData, action: e.target.value })}
-                  className="w-full bg-white border border-[#D8DEE6] rounded-[7px] px-2.5 py-1.5 text-[#168C82] font-mono focus:border-[#168C82] focus:outline-none focus:ring-2 focus:ring-[#168C82]/10 text-xs font-semibold shadow-xs"
+                  className="w-full bg-[#101419] border border-[#2A343E] rounded-lg px-2.5 py-1.5 text-[#CBFF70] font-mono focus:border-[#CBFF70] focus:outline-none text-xs font-semibold"
                 />
               </div>
               <div>
-                <label className="text-[#596579] block mb-1 text-[11px] font-medium">Tool / Adapter</label>
+                <label className="text-[#9DAAB8] block mb-1 text-[11px]">Tool / Adapter</label>
                 <input
                   type="text"
                   value={formData.tool}
                   onChange={e => setFormData({ ...formData, tool: e.target.value })}
-                  className="w-full bg-white border border-[#D8DEE6] rounded-[7px] px-2.5 py-1.5 text-[#18212F] font-mono focus:border-[#168C82] focus:outline-none focus:ring-2 focus:ring-[#168C82]/10 text-xs shadow-xs"
+                  className="w-full bg-[#101419] border border-[#2A343E] rounded-lg px-2.5 py-1.5 text-[#AB98FF] font-mono focus:border-[#CBFF70] focus:outline-none text-xs"
                 />
               </div>
             </div>
 
             {/* Target Resource */}
             <div>
-              <label className="text-[#596579] block mb-1 text-[11px] font-medium">Target Resource</label>
+              <label className="text-[#9DAAB8] block mb-1 text-[11px]">Target Resource</label>
               <input
                 type="text"
                 value={formData.resource}
                 onChange={e => setFormData({ ...formData, resource: e.target.value })}
-                className="w-full bg-white border border-[#D8DEE6] rounded-[7px] px-2.5 py-1.5 text-[#18212F] font-mono focus:border-[#168C82] focus:outline-none focus:ring-2 focus:ring-[#168C82]/10 text-xs shadow-xs"
+                className="w-full bg-[#101419] border border-[#2A343E] rounded-lg px-2.5 py-1.5 text-[#F0F4F8] font-mono focus:border-[#CBFF70] focus:outline-none text-xs"
               />
             </div>
 
@@ -503,36 +511,36 @@ export const AnalyzerPage: React.FC<AnalyzerPageProps> = ({
               <button
                 type="button"
                 onClick={() => setShowAdvanced(!showAdvanced)}
-                className="flex items-center gap-1.5 text-xs text-[#596579] hover:text-[#18212F] transition-colors cursor-pointer py-1 font-medium"
+                className="flex items-center gap-1.5 text-xs text-[#9DAAB8] hover:text-[#CBFF70] transition-colors cursor-pointer py-1 font-mono"
               >
                 {showAdvanced ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
-                <span>Advanced Context</span>
+                <span>Advanced Context & AST</span>
               </button>
 
               {showAdvanced && (
-                <div className="mt-2.5 p-3 rounded-[7px] bg-[#F6F7F9] border border-[#E2E6EB] space-y-2.5 text-xs">
+                <div className="mt-2.5 p-3 rounded-lg bg-[#0E1318] border border-[#2A343E] space-y-2.5 text-xs">
                   <div>
-                    <label className="text-[#596579] block mb-1 text-[11px]">Agent Reasoning</label>
+                    <label className="text-[#9DAAB8] block mb-1 text-[11px]">Agent Reasoning</label>
                     <input
                       type="text"
                       value={formData.reason || ''}
                       onChange={e => setFormData({ ...formData, reason: e.target.value })}
-                      className="w-full bg-white border border-[#D8DEE6] rounded-[6px] px-2.5 py-1 text-[#18212F] text-xs focus:border-[#168C82] focus:outline-none"
+                      className="w-full bg-[#101419] border border-[#2A343E] rounded px-2.5 py-1 text-[#F0F4F8] text-xs focus:border-[#CBFF70] focus:outline-none"
                     />
                   </div>
 
                   <div>
-                    <label className="text-[#596579] block mb-1 text-[11px]">Data Provenance</label>
+                    <label className="text-[#9DAAB8] block mb-1 text-[11px]">Data Provenance</label>
                     <input
                       type="text"
                       value={formData.data_provenance || ''}
                       onChange={e => setFormData({ ...formData, data_provenance: e.target.value })}
-                      className="w-full bg-white border border-[#D8DEE6] rounded-[6px] px-2.5 py-1 text-[#596579] font-mono text-xs focus:border-[#168C82] focus:outline-none"
+                      className="w-full bg-[#101419] border border-[#2A343E] rounded px-2.5 py-1 text-[#AB98FF] font-mono text-xs focus:border-[#CBFF70] focus:outline-none"
                     />
                   </div>
 
                   <div>
-                    <label className="text-[#596579] block mb-1 text-[11px]">Parameters (JSON)</label>
+                    <label className="text-[#9DAAB8] block mb-1 text-[11px]">Parameters (JSON)</label>
                     <input
                       type="text"
                       value={JSON.stringify(formData.parameters || {})}
@@ -541,7 +549,7 @@ export const AnalyzerPage: React.FC<AnalyzerPageProps> = ({
                           setFormData({ ...formData, parameters: JSON.parse(e.target.value) });
                         } catch {}
                       }}
-                      className="w-full bg-white border border-[#D8DEE6] rounded-[6px] px-2.5 py-1 text-[#596579] font-mono text-xs focus:border-[#168C82] focus:outline-none"
+                      className="w-full bg-[#101419] border border-[#2A343E] rounded px-2.5 py-1 text-[#9DAAB8] font-mono text-xs focus:border-[#CBFF70] focus:outline-none"
                     />
                   </div>
                 </div>
@@ -549,21 +557,33 @@ export const AnalyzerPage: React.FC<AnalyzerPageProps> = ({
             </div>
           </div>
 
-          {/* Action CTA */}
+          {/* Action CTA with LatticeLoader */}
           <div className="pt-2">
             <button
               disabled={isAnalyzing}
               onClick={handleAnalyze}
-              className="w-full h-10 rounded-[7px] bg-[#168C82] hover:bg-[#10776F] text-white font-semibold text-xs transition-colors flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 shadow-xs"
+              className="btn-chartreuse w-full h-11 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-90 shadow-lg text-xs"
             >
               {isAnalyzing ? (
-                <>
-                  <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-                  <span>Evaluating Pipeline...</span>
-                </>
+                <LatticeLoader
+                  status="working"
+                  label="Evaluating Pipeline"
+                  pattern="orbit"
+                  grid={3}
+                  shape="round"
+                  cellSize={5}
+                  gap={2}
+                  fontSize={13}
+                  color="#0B0E11"
+                  doneColor="#69E2AD"
+                  errorColor="#FF8585"
+                  glow={true}
+                  glowColor="#0B0E11"
+                  showTimer={true}
+                />
               ) : (
                 <>
-                  <Zap className="w-3.5 h-3.5 fill-white" />
+                  <Zap className="w-4 h-4 fill-[#0B0E11] text-[#0B0E11]" />
                   <span>Analyze Action</span>
                 </>
               )}
@@ -574,14 +594,46 @@ export const AnalyzerPage: React.FC<AnalyzerPageProps> = ({
         {/* ==================================================
             2. SECURITY PIPELINE (Vertical 8 Stages) (4 Cols)
             ================================================== */}
-        <div className="lg:col-span-4 aegis-panel p-5 space-y-3">
-          <div className="border-b border-[#E2E6EB] pb-2.5 flex items-center justify-between">
-            <span className="text-xs font-semibold tracking-wide text-[#18212F] uppercase">
-              Security Pipeline
+        <div className="lg:col-span-4 control-panel p-5 space-y-3">
+          <div className="border-b border-[#2A343E] pb-2.5 flex items-center justify-between">
+            <span className="text-xs font-semibold tracking-wide text-[#F0F4F8] uppercase font-mono">
+              Invariant Pipeline
             </span>
-            <span className="text-[11px] text-[#596579] font-medium">
-              {isAnalyzing ? activeStageDetail : inspectionResult ? 'Evaluated' : 'Idle'}
-            </span>
+            <div className="text-[11px] text-[#9DAAB8] font-medium flex items-center">
+              {isAnalyzing ? (
+                <LatticeLoader
+                  status="working"
+                  label={activeStageDetail || 'Evaluating'}
+                  pattern="pulse"
+                  grid={3}
+                  shape="round"
+                  color="#CBFF70"
+                  cellSize={4}
+                  gap={2}
+                  fontSize={11}
+                  showTimer={true}
+                />
+              ) : inspectionResult ? (
+                <LatticeLoader
+                  status={inspectionResult.decision === 'DENY' ? 'error' : 'done'}
+                  label="Evaluating"
+                  doneLabel="Evaluated in"
+                  errorLabel="Blocked in"
+                  pattern="orbit"
+                  grid={3}
+                  shape="round"
+                  cellSize={4}
+                  gap={2}
+                  fontSize={11}
+                  doneColor="#69E2AD"
+                  errorColor="#FF8585"
+                  elapsed={Math.max(0.1, Number((inspectionResult.latency_ms / 1000).toFixed(2)))}
+                  showTimer={true}
+                />
+              ) : (
+                <span className="text-[11px] text-[#5C6978] font-mono">Idle</span>
+              )}
+            </div>
           </div>
 
           {/* Vertical Pipeline Nodes */}
@@ -590,44 +642,44 @@ export const AnalyzerPage: React.FC<AnalyzerPageProps> = ({
               const Icon = stage.icon;
               const isCurrent = currentStep === idx + 1;
 
-              let nodeBorder = 'border-[#E2E6EB] bg-white';
-              let badgeColor = 'text-[#8A94A3] bg-[#F1F3F5]';
+              let nodeBorder = 'border-[#2A343E] bg-[#101419]';
+              let badgeColor = 'text-[#5C6978] bg-[#0E1318]';
 
               if (stage.status === 'PROCESSING') {
-                nodeBorder = 'border-[#168C82] bg-[#E7F5F3] shadow-xs';
-                badgeColor = 'text-[#168C82] bg-white animate-pulse font-semibold';
+                nodeBorder = 'border-[#CBFF70]/70 bg-[#1B232B] shadow-sm';
+                badgeColor = 'text-[#CBFF70] bg-[#CBFF70]/10 border border-[#CBFF70]/30 animate-pulse font-semibold';
               } else if (stage.status === 'PASS') {
-                nodeBorder = 'border-[#E2E6EB] bg-[#FCFDFD]';
-                badgeColor = 'text-[#21A67A] bg-[#E7F7F1] border border-[#21A67A]/30 font-semibold';
+                nodeBorder = 'border-[#2A343E] bg-[#101419]';
+                badgeColor = 'text-[#69E2AD] bg-[#69E2AD]/10 border border-[#69E2AD]/20 font-semibold';
               } else if (stage.status === 'FLAG') {
-                nodeBorder = 'border-[#D99018]/30 bg-[#FFFDF9]';
-                badgeColor = 'text-[#D99018] bg-[#FFF4DE] border border-[#D99018]/30 font-semibold';
+                nodeBorder = 'border-[#FFD080]/40 bg-[#1B232B]';
+                badgeColor = 'text-[#FFD080] bg-[#FFD080]/10 border border-[#FFD080]/20 font-semibold';
               } else if (stage.status === 'ATTACK' || stage.status === 'FAIL' || stage.status === 'DENY') {
-                nodeBorder = stage.isAttack ? 'border-[#8B5CF6]/40 bg-[#FBF9FF]' : 'border-[#E65353]/30 bg-[#FFF9F9]';
-                badgeColor = stage.isAttack ? 'text-[#8B5CF6] bg-[#F2ECFF] border border-[#8B5CF6]/30 font-semibold' : 'text-[#E65353] bg-[#FDECEC] border border-[#E65353]/30 font-semibold';
+                nodeBorder = stage.isAttack ? 'border-[#AB98FF]/40 bg-[#1B232B]' : 'border-[#FF8585]/40 bg-[#1B232B]';
+                badgeColor = stage.isAttack ? 'text-[#AB98FF] bg-[#AB98FF]/10 border border-[#AB98FF]/20 font-semibold' : 'text-[#FF8585] bg-[#FF8585]/10 border border-[#FF8585]/20 font-semibold';
               } else if (stage.status === 'APPROVAL') {
-                nodeBorder = 'border-[#D99018]/40 bg-[#FFFDF9]';
-                badgeColor = 'text-[#D99018] bg-[#FFF4DE] border border-[#D99018]/30 font-semibold';
+                nodeBorder = 'border-[#FFD080]/40 bg-[#1B232B]';
+                badgeColor = 'text-[#FFD080] bg-[#FFD080]/10 border border-[#FFD080]/20 font-semibold';
               } else if (stage.status === 'ALLOW') {
-                nodeBorder = 'border-[#21A67A]/40 bg-[#F9FEFC]';
-                badgeColor = 'text-[#21A67A] bg-[#E7F7F1] border border-[#21A67A]/30 font-semibold';
+                nodeBorder = 'border-[#69E2AD]/40 bg-[#1B232B]';
+                badgeColor = 'text-[#69E2AD] bg-[#69E2AD]/10 border border-[#69E2AD]/20 font-semibold';
               }
 
               return (
                 <div key={stage.id} className="relative">
-                  <div className={`p-2.5 rounded-[7px] border transition-all ${nodeBorder}`}>
+                  <div className={`p-2.5 rounded-lg border transition-all ${nodeBorder}`}>
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <Icon className={`w-3.5 h-3.5 ${stage.status === 'PROCESSING' ? 'text-[#168C82]' : 'text-[#596579]'}`} />
-                        <span className="font-semibold text-[#18212F] text-xs">{stage.name}</span>
+                        <Icon className={`w-3.5 h-3.5 ${stage.status === 'PROCESSING' ? 'text-[#CBFF70]' : 'text-[#9DAAB8]'}`} />
+                        <span className="font-semibold text-[#F0F4F8] text-xs">{stage.name}</span>
                       </div>
-                      <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded-[4px] ${badgeColor}`}>
+                      <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded ${badgeColor}`}>
                         {stage.status}
                       </span>
                     </div>
 
                     {stage.resultText && currentStep > idx && (
-                      <div className="text-[11px] text-[#596579] mt-1 pl-5 truncate font-normal">
+                      <div className="text-[11px] text-[#9DAAB8] mt-1 pl-5 truncate font-mono">
                         {stage.resultText}
                       </div>
                     )}
@@ -635,9 +687,9 @@ export const AnalyzerPage: React.FC<AnalyzerPageProps> = ({
 
                   {/* Connecting Line */}
                   {idx < pipelineStages.length - 1 && (
-                    <div className="h-1.5 w-px bg-[#CDD3DB] mx-auto relative">
+                    <div className="h-1.5 w-px bg-[#2A343E] mx-auto relative">
                       {isCurrent && (
-                        <span className="absolute -left-0.5 top-0 w-1.5 h-1.5 bg-[#168C82] rounded-full animate-ping" />
+                        <span className="absolute -left-0.5 top-0 w-1.5 h-1.5 bg-[#CBFF70] rounded-full animate-ping" />
                       )}
                     </div>
                   )}
@@ -652,32 +704,32 @@ export const AnalyzerPage: React.FC<AnalyzerPageProps> = ({
             ================================================== */}
         <div className="lg:col-span-4 space-y-4">
           {/* Risk Score Widget */}
-          <div className="aegis-panel p-5">
-            <div className="border-b border-[#E2E6EB] pb-2.5 flex items-center justify-between mb-3">
-              <span className="text-xs font-semibold tracking-wide text-[#18212F] uppercase">
+          <div className="control-panel p-5">
+            <div className="border-b border-[#2A343E] pb-2.5 flex items-center justify-between mb-3">
+              <span className="text-xs font-semibold tracking-wide text-[#F0F4F8] uppercase font-mono">
                 Risk Assessment
               </span>
               <Tooltip
                 term="Composite Calibration"
                 content="Evaluates action destructiveness, sensitivity tier, destination trust, and injection vectors."
               >
-                <span className="text-[11px] text-[#8A94A3] hover:text-[#168C82]">Info</span>
+                <span className="text-[11px] font-mono text-[#CBFF70] cursor-pointer hover:underline">Info</span>
               </Tooltip>
             </div>
 
             {/* Score Display */}
             <div className="flex items-center justify-between py-2">
               <div>
-                <div className="text-4xl font-semibold font-mono tabular-nums text-[#18212F]">
+                <div className="text-4xl font-bold font-mono tabular-nums text-[#F0F4F8]">
                   {inspectionResult ? inspectionResult.risk.risk_score : '--'}
                 </div>
                 <div
-                  className={`text-xs font-semibold mt-0.5 ${
+                  className={`text-xs font-semibold font-mono mt-0.5 ${
                     (inspectionResult?.risk.risk_score ?? 0) >= 71
-                      ? 'text-[#E65353]'
+                      ? 'text-[#FF8585]'
                       : (inspectionResult?.risk.risk_score ?? 0) >= 31
-                      ? 'text-[#D99018]'
-                      : 'text-[#21A67A]'
+                      ? 'text-[#FFD080]'
+                      : 'text-[#69E2AD]'
                   }`}
                 >
                   {inspectionResult ? `${inspectionResult.risk.risk_level.toUpperCase()} RISK` : 'PENDING EVALUATION'}
@@ -686,218 +738,253 @@ export const AnalyzerPage: React.FC<AnalyzerPageProps> = ({
 
               {/* Minimal bar breakdown */}
               {inspectionResult && (
-                <div className="w-36 space-y-1.5 text-[10px] text-[#596579]">
+                <div className="w-36 space-y-1.5 text-[10px] text-[#9DAAB8] font-mono">
                   <div className="flex justify-between">
                     <span>Action:</span>
-                    <span className="font-mono text-[#18212F] font-semibold">{inspectionResult.risk.components.action_risk}</span>
+                    <span className="font-mono text-[#F0F4F8] font-semibold">{inspectionResult.risk.components.action_risk}</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Sensitivity:</span>
-                    <span className="font-mono text-[#18212F] font-semibold">{inspectionResult.risk.components.sensitivity_risk}</span>
+                    <span className="font-mono text-[#F0F4F8] font-semibold">{inspectionResult.risk.components.sensitivity_risk}</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Injection:</span>
-                    <span className="font-mono text-[#18212F] font-semibold">{inspectionResult.risk.components.prompt_injection_risk}</span>
+                    <span className="font-mono text-[#F0F4F8] font-semibold">{inspectionResult.risk.components.prompt_injection_risk}</span>
                   </div>
                 </div>
               )}
             </div>
           </div>
 
-          {/* Decision Outcome Card */}
+          {/* Decision Outcome Card with Interactive BorderGlow */}
           {inspectionResult ? (
-            <div
-              className={`aegis-panel p-5 transition-all ${
+            <BorderGlow
+              edgeSensitivity={35}
+              glowColor={
                 inspectionResult.decision === 'ALLOW'
-                  ? 'border-[#21A67A] bg-[#F7FCFA]'
+                  ? '140 70 50'
                   : inspectionResult.decision === 'REQUIRE_APPROVAL'
-                  ? 'border-[#D99018] bg-[#FFFDF9]'
-                  : 'border-[#E65353] bg-[#FFF9F9]'
+                  ? '40 90 60'
+                  : '0 85 60'
+              }
+              backgroundColor="#151B21"
+              borderRadius={12}
+              glowRadius={36}
+              glowIntensity={1.2}
+              coneSpread={28}
+              animated={true}
+              colors={
+                inspectionResult.decision === 'ALLOW'
+                  ? ['#69E2AD', '#22c55e', '#10b981']
+                  : inspectionResult.decision === 'REQUIRE_APPROVAL'
+                  ? ['#FFD080', '#f59e0b', '#d97706']
+                  : ['#FF8585', '#ef4444', '#AB98FF']
+              }
+              className={`w-full transition-all ${
+                inspectionResult.decision === 'ALLOW'
+                  ? 'border-[#69E2AD]'
+                  : inspectionResult.decision === 'REQUIRE_APPROVAL'
+                  ? 'border-[#FFD080]'
+                  : 'border-[#FF8585]'
               }`}
             >
-              {/* ALLOW EXPERIENCE */}
-              {inspectionResult.decision === 'ALLOW' && (
-                <div className="space-y-3">
-                  <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 rounded-[6px] bg-[#E7F7F1] text-[#21A67A] border border-[#21A67A]/30 flex items-center justify-center shrink-0">
-                      <CheckCircle2 className="w-4 h-4" />
-                    </div>
-                    <div>
-                      <div className="text-sm font-bold text-[#21A67A]">
-                        ACTION AUTHORIZED
+              <div className="p-5">
+                {/* ALLOW EXPERIENCE */}
+                {inspectionResult.decision === 'ALLOW' && (
+                  <div className="space-y-3">
+                    <div className="flex items-start gap-3">
+                      <div className="w-8 h-8 rounded-lg bg-[#69E2AD]/15 text-[#69E2AD] border border-[#69E2AD]/30 flex items-center justify-center shrink-0">
+                        <CheckCircle2 className="w-4 h-4" />
                       </div>
-                      <div className="text-xs text-[#596579] mt-0.5 font-medium">
-                        Risk {inspectionResult.risk.risk_score}/100 · Low
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="space-y-1 text-xs text-[#596579] pt-2 border-t border-[#E2E6EB]">
-                    <div className="flex items-center gap-1.5 text-[#21A67A] font-medium">
-                      <CheckCircle2 className="w-3 h-3" /> Identity verified
-                    </div>
-                    <div className="flex items-center gap-1.5 text-[#21A67A] font-medium">
-                      <CheckCircle2 className="w-3 h-3" /> Context valid
-                    </div>
-                    <div className="flex items-center gap-1.5 text-[#21A67A] font-medium">
-                      <CheckCircle2 className="w-3 h-3" /> No injection detected
-                    </div>
-                    <div className="flex items-center gap-1.5 text-[#21A67A] font-medium">
-                      <CheckCircle2 className="w-3 h-3" /> Policy satisfied ({inspectionResult.policy.matched_policy})
-                    </div>
-                  </div>
-
-                  <div className="pt-2 border-t border-[#E2E6EB] flex justify-between items-center text-xs">
-                    <span className="text-[#8A94A3]">Execution:</span>
-                    <span className="font-semibold text-[#21A67A]">AUTHORIZED & EXECUTED</span>
-                  </div>
-                </div>
-              )}
-
-              {/* HUMAN APPROVAL EXPERIENCE */}
-              {inspectionResult.decision === 'REQUIRE_APPROVAL' && (
-                <div className="space-y-3">
-                  <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 rounded-[6px] bg-[#FFF4DE] text-[#D99018] border border-[#D99018]/30 flex items-center justify-center shrink-0">
-                      <Clock className="w-4 h-4" />
-                    </div>
-                    <div>
-                      <div className="text-sm font-bold text-[#D99018]">
-                        EXECUTION PAUSED
-                      </div>
-                      <div className="text-xs text-[#596579] mt-0.5 font-medium">
-                        Human authorization required.
+                      <div>
+                        <div className="text-sm font-bold text-[#69E2AD]">
+                          ACTION AUTHORIZED
+                        </div>
+                        <div className="text-xs text-[#9DAAB8] mt-0.5 font-medium font-mono">
+                          Risk {inspectionResult.risk.risk_score}/100 · Safe Execution
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  <div className="p-3 rounded-[7px] bg-white border border-[#E2E6EB] text-xs space-y-1.5 shadow-xs">
-                    <div className="flex justify-between">
-                      <span className="text-[#8A94A3]">Risk Score:</span>
-                      <span className="font-mono text-[#D99018] font-bold">{inspectionResult.risk.risk_score} / 100</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-[#8A94A3]">Agent:</span>
-                      <span className="font-mono text-[#18212F] font-medium">{inspectionResult.request.agent_id}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-[#8A94A3]">Action:</span>
-                      <span className="font-mono text-[#168C82] font-semibold">{inspectionResult.request.action}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-[#8A94A3]">Resource:</span>
-                      <span className="font-mono text-[#18212F] truncate max-w-[150px]">{inspectionResult.request.resource}</span>
-                    </div>
-                    <div className="flex justify-between pt-1 border-t border-[#E2E6EB]">
-                      <span className="text-[#8A94A3]">Policy:</span>
-                      <span className="font-mono text-[#8B5CF6] font-semibold">{inspectionResult.policy.matched_policy}</span>
-                    </div>
-                  </div>
-
-                  <div className="text-xs text-[#596579] leading-relaxed">
-                    {inspectionResult.policy.reason}
-                  </div>
-
-                  {inspectionResult.approval_status === 'PENDING' ? (
-                    <div className="pt-2 flex items-center gap-2">
-                      <button
-                        disabled={approvalLoading}
-                        onClick={handleRejectAction}
-                        className="flex-1 h-9 rounded-[7px] border border-[#E65353]/30 hover:bg-[#FDECEC] text-[#E65353] text-xs font-semibold transition-colors cursor-pointer"
-                      >
-                        Reject
-                      </button>
-                      <button
-                        disabled={approvalLoading}
-                        onClick={() => setApprovalModalOpen(true)}
-                        className="flex-1 h-9 rounded-[7px] bg-[#21A67A] hover:bg-[#1A8F68] text-white text-xs font-semibold transition-colors cursor-pointer shadow-xs"
-                      >
-                        Approve & Execute
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="pt-2 flex items-center justify-between text-xs border-t border-[#E2E6EB]">
-                      <span className="text-[#8A94A3]">Escrow Status:</span>
-                      <span className={inspectionResult.approval_status === 'APPROVED' ? 'text-[#21A67A] font-bold' : 'text-[#E65353] font-bold'}>
-                        {inspectionResult.approval_status}
-                      </span>
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* DENY EXPERIENCE */}
-              {inspectionResult.decision === 'DENY' && (
-                <div className="space-y-3">
-                  <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 rounded-[6px] bg-[#FDECEC] text-[#E65353] border border-[#E65353]/30 flex items-center justify-center shrink-0">
-                      <XCircle className="w-4 h-4" />
-                    </div>
-                    <div>
-                      <div className="text-sm font-bold text-[#E65353]">
-                        ACTION BLOCKED
+                    <div className="space-y-1 text-xs text-[#9DAAB8] pt-2 border-t border-[#2A343E] font-mono">
+                      <div className="flex items-center gap-1.5 text-[#69E2AD] font-medium">
+                        <CheckCircle2 className="w-3 h-3" /> Identity verified
                       </div>
-                      <div className="text-xs text-[#596579] mt-0.5 font-medium">
-                        Critical Risk · {inspectionResult.risk.risk_score}/100
+                      <div className="flex items-center gap-1.5 text-[#69E2AD] font-medium">
+                        <CheckCircle2 className="w-3 h-3" /> Context valid
+                      </div>
+                      <div className="flex items-center gap-1.5 text-[#69E2AD] font-medium">
+                        <CheckCircle2 className="w-3 h-3" /> No injection detected
+                      </div>
+                      <div className="flex items-center gap-1.5 text-[#69E2AD] font-medium">
+                        <CheckCircle2 className="w-3 h-3" /> Policy satisfied ({inspectionResult.policy.matched_policy})
                       </div>
                     </div>
-                  </div>
 
-                  <div className="p-3 rounded-[7px] bg-white border border-[#E2E6EB] text-xs space-y-1.5 shadow-xs">
-                    <div className="flex justify-between">
-                      <span className="text-[#8A94A3]">Agent:</span>
-                      <span className="font-mono text-[#18212F] font-medium">{inspectionResult.request.agent_id}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-[#8A94A3]">Attempted:</span>
-                      <span className="font-mono text-[#E65353] font-semibold">{inspectionResult.request.action}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-[#8A94A3]">Resource:</span>
-                      <span className="font-mono text-[#596579] truncate max-w-[150px]">{inspectionResult.request.resource}</span>
-                    </div>
-                    <div className="flex justify-between pt-1 border-t border-[#E2E6EB]">
-                      <span className="text-[#8A94A3]">Policy:</span>
-                      <span className="font-mono text-[#8B5CF6] font-semibold">{inspectionResult.policy.matched_policy}</span>
+                    <div className="pt-2 border-t border-[#2A343E] flex justify-between items-center text-xs font-mono">
+                      <span className="text-[#5C6978]">Execution:</span>
+                      <span className="font-semibold text-[#69E2AD]">AUTHORIZED & EXECUTED</span>
                     </div>
                   </div>
+                )}
 
-                  <div className="text-xs text-[#596579] leading-relaxed">
-                    {inspectionResult.policy.reason}
-                  </div>
+                {/* HUMAN APPROVAL EXPERIENCE */}
+                {inspectionResult.decision === 'REQUIRE_APPROVAL' && (
+                  <div className="space-y-3">
+                    <div className="flex items-start gap-3">
+                      <div className="w-8 h-8 rounded-lg bg-[#FFD080]/15 text-[#FFD080] border border-[#FFD080]/30 flex items-center justify-center shrink-0">
+                        <Clock className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <div className="text-sm font-bold text-[#FFD080]">
+                          EXECUTION PAUSED
+                        </div>
+                        <div className="text-xs text-[#9DAAB8] mt-0.5 font-medium font-mono">
+                          Human authorization required.
+                        </div>
+                      </div>
+                    </div>
 
-                  <div className="pt-2 border-t border-[#E2E6EB] flex justify-between items-center text-xs">
-                    <span className="text-[#8A94A3]">Execution:</span>
-                    <span className="font-bold text-[#E65353]">BLOCKED BEFORE TOOL INVOCATION</span>
+                    <div className="p-3 rounded-lg bg-[#0E1318] border border-[#2A343E] text-xs space-y-1.5 font-mono">
+                      <div className="flex justify-between">
+                        <span className="text-[#5C6978]">Risk Score:</span>
+                        <span className="font-mono text-[#FFD080] font-bold">{inspectionResult.risk.risk_score} / 100</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-[#5C6978]">Agent:</span>
+                        <span className="font-mono text-[#F0F4F8] font-medium">{inspectionResult.request.agent_id}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-[#5C6978]">Action:</span>
+                        <span className="font-mono text-[#CBFF70] font-semibold">{inspectionResult.request.action}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-[#5C6978]">Resource:</span>
+                        <span className="font-mono text-[#F0F4F8] truncate max-w-[150px]">{inspectionResult.request.resource}</span>
+                      </div>
+                      <div className="flex justify-between pt-1 border-t border-[#2A343E]">
+                        <span className="text-[#5C6978]">Policy:</span>
+                        <span className="font-mono text-[#AB98FF] font-semibold">{inspectionResult.policy.matched_policy}</span>
+                      </div>
+                    </div>
+
+                    <div className="text-xs text-[#9DAAB8] leading-relaxed">
+                      {inspectionResult.policy.reason}
+                    </div>
+
+                    {inspectionResult.approval_status === 'PENDING' ? (
+                      <div className="pt-2 flex items-center gap-2">
+                        <button
+                          disabled={approvalLoading}
+                          onClick={handleRejectAction}
+                          className="flex-1 h-9 rounded-lg border border-[#FF8585]/30 hover:bg-[#FF8585]/10 text-[#FF8585] text-xs font-semibold transition-colors cursor-pointer"
+                        >
+                          Reject
+                        </button>
+                        <button
+                          disabled={approvalLoading}
+                          onClick={() => setApprovalModalOpen(true)}
+                          className="flex-1 h-9 rounded-lg bg-[#69E2AD] hover:bg-[#7ff2bd] text-[#0B0E11] text-xs font-bold transition-colors cursor-pointer shadow-sm"
+                        >
+                          Approve & Execute
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="pt-2 flex items-center justify-between text-xs border-t border-[#2A343E] font-mono">
+                        <span className="text-[#5C6978]">Escrow Status:</span>
+                        <span className={inspectionResult.approval_status === 'APPROVED' ? 'text-[#69E2AD] font-bold' : 'text-[#FF8585] font-bold'}>
+                          {inspectionResult.approval_status}
+                        </span>
+                      </div>
+                    )}
                   </div>
-                </div>
-              )}
-            </div>
+                )}
+
+                {/* DENY EXPERIENCE */}
+                {inspectionResult.decision === 'DENY' && (
+                  <div className="space-y-3">
+                    <div className="flex items-start gap-3">
+                      <div className="w-8 h-8 rounded-lg bg-[#FF8585]/15 text-[#FF8585] border border-[#FF8585]/30 flex items-center justify-center shrink-0">
+                        <XCircle className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <div className="text-sm font-bold text-[#FF8585]">
+                          ACTION BLOCKED
+                        </div>
+                        <div className="text-xs text-[#9DAAB8] mt-0.5 font-medium font-mono">
+                          Critical Risk · {inspectionResult.risk.risk_score}/100
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-[#0E1318] border border-[#2A343E] text-xs space-y-1.5 font-mono">
+                      <div className="flex justify-between">
+                        <span className="text-[#5C6978]">Agent:</span>
+                        <span className="font-mono text-[#F0F4F8] font-medium">{inspectionResult.request.agent_id}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-[#5C6978]">Attempted:</span>
+                        <span className="font-mono text-[#FF8585] font-semibold">{inspectionResult.request.action}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-[#5C6978]">Resource:</span>
+                        <span className="font-mono text-[#9DAAB8] truncate max-w-[150px]">{inspectionResult.request.resource}</span>
+                      </div>
+                      <div className="flex justify-between pt-1 border-t border-[#2A343E]">
+                        <span className="text-[#5C6978]">Policy:</span>
+                        <span className="font-mono text-[#AB98FF] font-semibold">{inspectionResult.policy.matched_policy}</span>
+                      </div>
+                    </div>
+
+                    <div className="text-xs text-[#9DAAB8] leading-relaxed">
+                      {inspectionResult.policy.reason}
+                    </div>
+
+                    <div className="pt-2 border-t border-[#2A343E] flex justify-between items-center text-xs font-mono">
+                      <span className="text-[#5C6978]">Execution:</span>
+                      <span className="font-bold text-[#FF8585]">BLOCKED BEFORE TOOL INVOCATION</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </BorderGlow>
           ) : (
-            <div className="aegis-panel p-6 text-center text-[#8A94A3] text-xs">
-              Awaiting action analysis dispatch...
-            </div>
+            <BorderGlow
+              edgeSensitivity={30}
+              glowColor="140 70 50"
+              backgroundColor="#151B21"
+              borderRadius={12}
+              glowRadius={28}
+              glowIntensity={0.8}
+              coneSpread={24}
+              colors={['#CBFF70', '#AB98FF', '#2A343E']}
+              className="w-full"
+            >
+              <div className="p-6 text-center text-[#5C6978] text-xs font-mono">
+                Awaiting action analysis dispatch...
+              </div>
+            </BorderGlow>
           )}
 
           {/* Adversarial Prompt Injection Alert Box */}
           {inspectionResult?.prompt_injection.detected && (
-            <div className="p-4 rounded-[10px] border border-[#8B5CF6]/30 bg-[#F2ECFF] space-y-2 shadow-xs">
-              <div className="flex items-center gap-2 text-[#8B5CF6] text-xs font-semibold">
+            <div className="p-4 rounded-lg border border-[#AB98FF]/40 bg-[#1B232B] space-y-2 shadow-md">
+              <div className="flex items-center gap-2 text-[#AB98FF] text-xs font-semibold">
                 <ShieldAlert className="w-4 h-4" />
                 <span>Prompt Injection Detected</span>
               </div>
 
-              <div className="text-xs text-[#596579]">
+              <div className="text-xs text-[#9DAAB8]">
                 Adversarial jailbreak signature detected in request payload:
               </div>
 
-              <code className="block bg-white p-2.5 rounded-[6px] border border-[#8B5CF6]/25 text-[#7C3AED] font-mono text-xs break-all">
+              <code className="block bg-[#0E1318] p-2.5 rounded border border-[#AB98FF]/30 text-[#AB98FF] font-mono text-xs break-all">
                 "{inspectionResult.prompt_injection.matched_patterns.join('", "')}"
               </code>
 
-              <div className="pt-1 text-xs text-[#E65353] font-semibold flex items-center justify-between">
+              <div className="pt-1 text-xs text-[#FF8585] font-semibold flex items-center justify-between font-mono">
                 <span>Security Response:</span>
-                <span className="px-2 py-0.5 rounded-[4px] bg-[#FDECEC] border border-[#E65353]/30">
+                <span className="px-2 py-0.5 rounded bg-[#FF8585]/15 border border-[#FF8585]/30">
                   ACTION TERMINATED
                 </span>
               </div>
@@ -908,28 +995,28 @@ export const AnalyzerPage: React.FC<AnalyzerPageProps> = ({
 
       {/* Confirmation Modal for Human Authorization */}
       {approvalModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs">
-          <div className="aegis-panel-elevated p-6 max-w-md w-full border border-[#CDD3DB] shadow-2xl">
-            <div className="flex items-center gap-3 text-[#21A67A] mb-3">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs">
+          <div className="control-panel-elevated p-6 max-w-md w-full border border-[#2A343E] shadow-2xl">
+            <div className="flex items-center gap-3 text-[#69E2AD] mb-3">
               <CheckCircle2 className="w-5 h-5" />
-              <h3 className="font-semibold text-sm text-[#18212F]">
+              <h3 className="font-semibold text-sm text-[#F0F4F8]">
                 Authorize Agent Execution
               </h3>
             </div>
-            <p className="text-xs text-[#596579] leading-relaxed mb-4">
-              This action will be released to the Secure Tool Executor. The agent will gain clearance to execute <code className="text-[#168C82] font-mono font-semibold">{inspectionResult?.request.action}</code> on <code className="text-[#18212F] font-mono">{inspectionResult?.request.resource}</code>.
+            <p className="text-xs text-[#9DAAB8] leading-relaxed mb-4">
+              This action will be released to the Secure Tool Executor. The agent will gain clearance to execute <code className="text-[#CBFF70] font-mono font-semibold">{inspectionResult?.request.action}</code> on <code className="text-[#F0F4F8] font-mono">{inspectionResult?.request.resource}</code>.
             </p>
-            <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-[#E2E6EB]">
+            <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-[#2A343E]">
               <button
                 onClick={() => setApprovalModalOpen(false)}
-                className="px-3.5 py-1.5 rounded-[7px] border border-[#CDD3DB] hover:bg-[#F1F3F5] text-[#596579] text-xs font-medium transition-colors cursor-pointer"
+                className="px-3.5 py-1.5 rounded-lg border border-[#2A343E] hover:bg-[#1B232B] text-[#9DAAB8] text-xs font-medium transition-colors cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 disabled={approvalLoading}
                 onClick={handleConfirmAuthorize}
-                className="px-4 py-1.5 rounded-[7px] bg-[#21A67A] hover:bg-[#1A8F68] text-white text-xs font-semibold transition-colors cursor-pointer shadow-xs"
+                className="btn-chartreuse px-4 py-1.5 text-xs font-semibold cursor-pointer shadow-sm"
               >
                 {approvalLoading ? 'Releasing...' : 'Authorize'}
               </button>

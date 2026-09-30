@@ -183,6 +183,7 @@ export interface AuditLogEntry {
   execution_status: ExecutionStatus;
   latency_ms: number;
   reason: string;
+  signature?: string;
 }
 
 export interface DashboardMetrics {
@@ -210,4 +211,34 @@ export interface DashboardMetrics {
     decision: string;
     details: string;
   }[];
+}
+
+export interface N8nWebhookConfig {
+  url: string;
+  test_url: string;
+  active_url_type: 'production' | 'test';
+  enabled: boolean;
+  forward_evaluations: boolean;
+  forward_approvals: boolean;
+  forward_alerts: boolean;
+  last_status?: 'SUCCESS' | 'ERROR' | 'INACTIVE_WORKFLOW' | 'IDLE';
+  last_status_code?: number;
+  last_tested_at?: string;
+  last_error_hint?: string;
+  deliveries_count: number;
+  successful_deliveries: number;
+}
+
+export interface N8nWebhookDelivery {
+  id: string;
+  timestamp: string;
+  event: 'agent_permission_check' | 'governor_decision' | 'approval_decision' | 'manual_test';
+  target_url: string;
+  status_code: number;
+  duration_ms: number;
+  success: boolean;
+  request_payload: any;
+  response_body: any;
+  error?: string;
+  hint?: string;
 }
