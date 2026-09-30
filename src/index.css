@@ -1,0 +1,107 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --bg-main: #F6F7F9;
+    --bg-sidebar: #FFFFFF;
+    --bg-panel: #FFFFFF;
+    --bg-surface-secondary: #F1F3F5;
+    --bg-surface-hover: #ECEFF2;
+    --border-subtle: #E2E6EB;
+    --border-strong: #CDD3DB;
+    
+    /* Primary Brand Teal */
+    --primary-teal: #168C82;
+    --primary-teal-hover: #10776F;
+    --primary-teal-soft: #E7F5F3;
+    --primary-teal-nav: #EAF6F4;
+    
+    /* Semantic State Colors */
+    --status-success: #21A67A;
+    --status-success-soft: #E7F7F1;
+    
+    --status-warning: #D99018;
+    --status-warning-soft: #FFF4DE;
+    
+    --status-danger: #E65353;
+    --status-danger-soft: #FDECEC;
+    
+    --status-injection: #8B5CF6;
+    --status-injection-soft: #F2ECFF;
+    
+    --status-info: #4A78C2;
+    --status-info-soft: #EBF2FC;
+
+    /* Typography */
+    --text-primary: #18212F;
+    --text-secondary: #596579;
+    --text-muted: #8A94A3;
+  }
+
+  body {
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+    font-family: 'Inter', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Subtle Natural Scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #F1F3F5;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #CDD3DB;
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #8A94A3;
+  }
+}
+
+/* Panel Styles - Crisp white cards with subtle shadow and border */
+.aegis-panel {
+  background-color: #FFFFFF;
+  border: 1px solid #E2E6EB;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03), 0 2px 8px rgba(20, 30, 40, 0.02);
+}
+
+.aegis-panel-elevated {
+  background-color: #FFFFFF;
+  border: 1px solid #CDD3DB;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(20, 30, 40, 0.08);
+}
+
+/* Subtle highlights restricted ONLY to key active states / security outcomes */
+.aegis-glow-teal {
+  box-shadow: 0 2px 12px -2px rgba(22, 140, 130, 0.15);
+}
+
+.aegis-glow-success {
+  box-shadow: 0 2px 12px -2px rgba(33, 166, 122, 0.18);
+}
+
+.aegis-glow-warning {
+  box-shadow: 0 2px 12px -2px rgba(217, 144, 24, 0.18);
+}
+
+.aegis-glow-danger {
+  box-shadow: 0 2px 12px -2px rgba(230, 83, 83, 0.2);
+}
+
+.aegis-glow-injection {
+  box-shadow: 0 2px 14px -2px rgba(139, 92, 246, 0.2);
+}
+
+/* Subtle soft dot background */
+.enterprise-grid {
+  background-image: radial-gradient(#E2E6EB 1px, transparent 1px);
+  background-size: 28px 28px;
+}

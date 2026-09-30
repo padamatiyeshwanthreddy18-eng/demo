@@ -1,0 +1,8 @@
+{
+  "name": "AEGIS AI — Agent Permission Governor",
+  "description": "A real-time security layer that intercepts autonomous AI agent actions, verifies permissions, detects malicious intent, evaluates contextual risk, and prevents unauthorized execution.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
